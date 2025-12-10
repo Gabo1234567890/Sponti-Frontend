@@ -22,7 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Base60
@@ -51,7 +54,11 @@ fun InputField(
     icon: @Composable (() -> Unit)? = null,
     errorMessage: String = "",
     forgotPassword: Boolean = false,
-    onForgotPasswordClick: (() -> Unit)? = null
+    onForgotPasswordClick: (() -> Unit)? = null,
+    onIconClick: (() -> Unit)? = null,
+    isPassword: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onFocusChange: (Boolean) -> Unit
 ) {
     val borderColor = when (inputState) {
         InputState.Default -> Base80
@@ -79,9 +86,7 @@ fun InputField(
         ) {
             if (label.isNotEmpty() && labelColor != null) {
                 Text(
-                    text = label,
-                    style = Caption1,
-                    color = labelColor
+                    text = label, style = Caption1, color = labelColor
                 )
             }
         }
@@ -106,31 +111,29 @@ fun InputField(
                             }
                         },
                         textStyle = Paragraph1.copy(color = Base100),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().onFocusChanged({ onFocusChange.invoke(it.isFocused) }),
                         decorationBox = { innerTextField ->
                             if (value.isEmpty()) {
                                 Text(
-                                    text = placeholder,
-                                    style = Paragraph1,
-                                    color = Base60
+                                    text = placeholder, style = Paragraph1, color = Base60
                                 )
                             }
                             innerTextField()
                         },
                         singleLine = maxLength <= 0,
                         cursorBrush = SolidColor(Base100),
-                        onTextLayout = { layout -> isMultiline = layout.lineCount > 1 }
+                        onTextLayout = { layout -> isMultiline = layout.lineCount > 1 },
+                        visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None
                     )
                 }
 
                 Spacer(Modifier.width(8.dp))
 
                 if (showIcon && icon != null) {
-                    icon()
+                    Box(modifier = Modifier.clickable { onIconClick?.invoke() }) { icon() }
                 } else if (maxLength > 0) {
                     Text(
-                        text = "${value.length}/$maxLength",
-                        style = Caption1.copy(color = Base80)
+                        text = "${value.length}/$maxLength", style = Caption1.copy(color = Base80)
                     )
                 }
             }
@@ -149,8 +152,7 @@ fun InputField(
                 ) {
                     if (inputState == InputState.Error && errorMessage.isNotEmpty()) {
                         Text(
-                            text = errorMessage,
-                            style = Caption2.copy(color = Error)
+                            text = errorMessage, style = Caption2.copy(color = Error)
                         )
                     }
                     if (forgotPassword && onForgotPasswordClick != null) {
@@ -158,8 +160,7 @@ fun InputField(
                         Text(
                             "Forgot password?",
                             style = UnderlinedCaption1.copy(color = Primary1),
-                            modifier = Modifier.clickable { onForgotPasswordClick.invoke() }
-                        )
+                            modifier = Modifier.clickable { onForgotPasswordClick.invoke() })
                     }
                 }
             }

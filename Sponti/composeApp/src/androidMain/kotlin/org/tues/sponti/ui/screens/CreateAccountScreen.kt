@@ -71,6 +71,7 @@ fun CreateAccountScreen(
     var isSubmitting by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
 
+    val snackBarHostState = remember { SnackbarHostState() }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -98,7 +99,11 @@ fun CreateAccountScreen(
                 label = "Username",
                 placeholder = "Username",
                 inputState = usernameState,
-                errorMessage = usernameError
+                errorMessage = usernameError,
+                onFocusChange = { focused ->
+                    usernameState =
+                        if (focused) InputState.Active else if (username.isEmpty()) InputState.Default else InputState.Filled
+                }
             )
             Spacer(Modifier.height(16.dp))
             InputField(
@@ -110,7 +115,11 @@ fun CreateAccountScreen(
                 label = "Email",
                 placeholder = "Email",
                 inputState = emailState,
-                errorMessage = emailError
+                errorMessage = emailError,
+                onFocusChange = { focused ->
+                    emailState =
+                        if (focused) InputState.Active else if (email.isEmpty()) InputState.Default else InputState.Filled
+                }
             )
             Spacer(Modifier.height(16.dp))
             InputField(
@@ -124,7 +133,14 @@ fun CreateAccountScreen(
                 inputState = passwordState,
                 showIcon = true,
                 icon = { if (showPassword) R.drawable.eye_crossed else R.drawable.eye },
-                errorMessage = passwordError
+                errorMessage = passwordError,
+                isPassword = true,
+                isPasswordVisible = showPassword,
+                onIconClick = { showPassword = !showPassword },
+                onFocusChange = { focused ->
+                    passwordState =
+                        if (focused) InputState.Active else if (password.isEmpty()) InputState.Default else InputState.Filled
+                }
             )
         }
         Spacer(Modifier.height(64.dp))
@@ -163,20 +179,23 @@ fun CreateAccountScreen(
                                     if ("username" in error) usernameError = error
                                     else if ("email" in error) emailError = error
                                     else if ("password" in error) passwordError = error
-                                    else SnackbarHostState().showSnackbar(message = error)
+                                    else snackBarHostState.showSnackbar(message = error)
                                 }
                             } catch (e: Exception) {
                                 val error = e.localizedMessage ?: "Network error"
-                                SnackbarHostState().showSnackbar(message = error)
+                                snackBarHostState.showSnackbar(message = error)
                             } finally {
                                 isSubmitting = false
                             }
                         }
                     }
                 }
-                usernameState = if (usernameError.isEmpty()) InputState.Default else InputState.Error
-                emailState = if (emailError.isEmpty()) InputState.Default else InputState.Error
-                passwordState = if (passwordError.isEmpty()) InputState.Default else InputState.Error
+                usernameState =
+                    if (usernameError.isEmpty()) if (username.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
+                emailState =
+                    if (emailError.isEmpty()) if (email.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
+                passwordState =
+                    if (passwordError.isEmpty()) if (password.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
             }
             Spacer(Modifier.height(8.dp))
             Row {
