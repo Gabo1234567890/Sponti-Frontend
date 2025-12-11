@@ -1,6 +1,5 @@
 package org.tues.sponti.data.network
 
-import android.util.Log
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

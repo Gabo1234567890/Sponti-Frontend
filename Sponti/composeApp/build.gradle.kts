@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
@@ -35,11 +34,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("com.squareup.retrofit2:retrofit:2.9.0")
-            implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
-            implementation("com.squareup.okhttp3:okhttp:4.10.0")
-            implementation("com.squareup.moshi:moshi:1.15.0")
-            implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+            implementation(libs.retrofit)
+            implementation(libs.converter.moshi)
+            implementation(libs.okhttp)
+            implementation(libs.moshi)
+            implementation(libs.moshi.kotlin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

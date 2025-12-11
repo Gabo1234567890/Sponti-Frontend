@@ -114,7 +114,7 @@ fun InputField(
                         textStyle = Paragraph1.copy(color = Base100),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .onFocusChanged({ onFocusChange.invoke(it.isFocused) }),
+                            .onFocusChanged { onFocusChange.invoke(it.isFocused) },
                         decorationBox = { innerTextField ->
                             if (value.isEmpty()) {
                                 Text(
