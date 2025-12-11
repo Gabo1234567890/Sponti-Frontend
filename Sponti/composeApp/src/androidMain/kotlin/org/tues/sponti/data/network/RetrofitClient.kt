@@ -24,4 +24,6 @@ object RetrofitClient {
             .build()
             .create(ApiService::class.java)
     }
+
+    fun getMoshi() = moshi
 }

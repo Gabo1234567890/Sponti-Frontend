@@ -1,9 +1,7 @@
 package org.tues.sponti.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +30,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.tues.sponti.BuildConfig
 import org.tues.sponti.R
 import org.tues.sponti.data.auth.AuthRepository
+import org.tues.sponti.data.network.ErrorResponse
+import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.ui.components.ButtonSize
 import org.tues.sponti.ui.components.ButtonState
 import org.tues.sponti.ui.components.InputField
@@ -79,6 +80,28 @@ fun CreateAccountScreen(
     var showPassword by remember { mutableStateOf(false) }
 
     val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(usernameError) {
+        usernameState =
+            if (usernameError.isNotEmpty()) InputState.Error
+            else if (username.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
+    LaunchedEffect(emailError) {
+        emailState =
+            if (emailError.isNotEmpty()) InputState.Error
+            else if (email.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
+    LaunchedEffect(passwordError) {
+        passwordState =
+            if (passwordError.isNotEmpty()) InputState.Error
+            else if (password.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -177,7 +200,7 @@ fun CreateAccountScreen(
                 when {
                     username.isBlank() -> usernameError = "Username is empty"
 
-                    !email.contains("@") || !email.contains(".") -> emailError =
+                    !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailError =
                         "Invalid email address"
 
                     password.length < 8 -> passwordError = "Password must be at least 8 characters"
@@ -195,11 +218,38 @@ fun CreateAccountScreen(
                                 if (resp.isSuccessful) {
                                     onSuccess()
                                 } else {
-                                    val error = resp.errorBody()?.string() ?: "Registration failed"
-                                    if ("username" in error) usernameError = error
-                                    else if ("email" in error) emailError = error
-                                    else if ("password" in error) passwordError = error
-                                    else snackBarHostState.showSnackbar(message = error)
+                                    val errorJson = resp.errorBody()?.string()
+                                    errorJson?.let {
+                                        val adapter = RetrofitClient.getMoshi()
+                                            .adapter(ErrorResponse::class.java)
+                                        val parsedError = adapter.fromJson(it)
+                                        if (
+                                            parsedError?.getMessage()?.lowercase()
+                                                ?.contains("username") == true
+                                            || parsedError?.error?.lowercase()
+                                                ?.contains("username") == true
+                                        ) usernameError = parsedError.getMessage()
+                                            ?: parsedError.error ?: "Unknown username error"
+                                        else if (
+                                            parsedError?.getMessage()?.lowercase()
+                                                ?.contains("email") == true
+                                            || parsedError?.error?.lowercase()
+                                                ?.contains("email") == true
+                                        ) {
+                                            emailError = parsedError.getMessage()
+                                                ?: parsedError.error ?: "Unknown email error"
+                                        } else if (
+                                            parsedError?.getMessage()?.lowercase()
+                                                ?.contains("password") == true
+                                            || parsedError?.error?.lowercase()
+                                                ?.contains("password") == true
+                                        ) passwordError = parsedError.getMessage()
+                                            ?: parsedError.error ?: "Unknown password error"
+                                        else snackBarHostState.showSnackbar(
+                                            message = parsedError?.getMessage()
+                                                ?: parsedError?.error ?: "Unknown error"
+                                        )
+                                    }
                                 }
                             } catch (e: Exception) {
                                 val error = e.localizedMessage ?: "Network error"
@@ -224,5 +274,6 @@ fun CreateAccountScreen(
                 LinkButton(text = "Log In") { onNavigateToLogin() }
             }
         }
+        SnackbarHost(hostState = snackBarHostState)
     }
 }
