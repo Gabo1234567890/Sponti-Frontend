@@ -3,6 +3,7 @@ package org.tues.sponti.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,7 +112,9 @@ fun InputField(
                             }
                         },
                         textStyle = Paragraph1.copy(color = Base100),
-                        modifier = Modifier.fillMaxWidth().onFocusChanged({ onFocusChange.invoke(it.isFocused) }),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged({ onFocusChange.invoke(it.isFocused) }),
                         decorationBox = { innerTextField ->
                             if (value.isEmpty()) {
                                 Text(
@@ -130,7 +133,8 @@ fun InputField(
                 Spacer(Modifier.width(8.dp))
 
                 if (showIcon && icon != null) {
-                    Box(modifier = Modifier.clickable { onIconClick?.invoke() }) { icon() }
+                    Box(modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() },
+                        indication = null) { onIconClick?.invoke() }) { icon() }
                 } else if (maxLength > 0) {
                     Text(
                         text = "${value.length}/$maxLength", style = Caption1.copy(color = Base80)

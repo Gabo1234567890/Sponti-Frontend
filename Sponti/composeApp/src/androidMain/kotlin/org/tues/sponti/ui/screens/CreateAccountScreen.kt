@@ -1,6 +1,9 @@
 package org.tues.sponti.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -33,6 +37,7 @@ import org.tues.sponti.ui.components.InputField
 import org.tues.sponti.ui.components.InputState
 import org.tues.sponti.ui.components.LinkButton
 import org.tues.sponti.ui.components.PrimaryButton
+import org.tues.sponti.ui.theme.Base0
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Caption1
 import org.tues.sponti.ui.theme.Heading3
@@ -75,12 +80,14 @@ fun CreateAccountScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .background(Base0),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Column {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.logo_name),
                 contentDescription = "Sponti Logo"
@@ -103,8 +110,7 @@ fun CreateAccountScreen(
                 onFocusChange = { focused ->
                     usernameState =
                         if (focused) InputState.Active else if (username.isEmpty()) InputState.Default else InputState.Filled
-                }
-            )
+                })
             Spacer(Modifier.height(16.dp))
             InputField(
                 value = email,
@@ -119,8 +125,7 @@ fun CreateAccountScreen(
                 onFocusChange = { focused ->
                     emailState =
                         if (focused) InputState.Active else if (email.isEmpty()) InputState.Default else InputState.Filled
-                }
-            )
+                })
             Spacer(Modifier.height(16.dp))
             InputField(
                 value = password,
@@ -132,7 +137,12 @@ fun CreateAccountScreen(
                 placeholder = "Password",
                 inputState = passwordState,
                 showIcon = true,
-                icon = { if (showPassword) R.drawable.eye_crossed else R.drawable.eye },
+                icon = {
+                    Image(
+                        painter = painterResource(if (showPassword) R.drawable.eye_crossed else R.drawable.eye),
+                        contentDescription = "Toggle password visibility"
+                    )
+                },
                 errorMessage = passwordError,
                 isPassword = true,
                 isPasswordVisible = showPassword,
@@ -140,15 +150,23 @@ fun CreateAccountScreen(
                 onFocusChange = { focused ->
                     passwordState =
                         if (focused) InputState.Active else if (password.isEmpty()) InputState.Default else InputState.Filled
-                }
-            )
+                })
         }
         Spacer(Modifier.height(64.dp))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             PrimaryButton(
                 text = if (isSubmitting) "Creating..." else "Create Account",
                 size = ButtonSize.Large,
-                state = if (isSubmitting) ButtonState.Disabled else ButtonState.Active
+                state = if (
+                    isSubmitting
+                    || username.isEmpty()
+                    || email.isEmpty()
+                    || password.isEmpty()
+                    || usernameError.isNotEmpty()
+                    || emailError.isNotEmpty()
+                    || passwordError.isNotEmpty()
+                ) ButtonState.Disabled
+                else ButtonState.Active
             ) {
                 focusManager.clearFocus()
                 usernameError = ""
@@ -198,7 +216,7 @@ fun CreateAccountScreen(
                     if (passwordError.isEmpty()) if (password.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
             }
             Spacer(Modifier.height(8.dp))
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Already have an account?", style = Caption1, color = Base100)
                 Spacer(Modifier.width(12.dp))
                 LinkButton(text = "Log In") { onNavigateToLogin() }
