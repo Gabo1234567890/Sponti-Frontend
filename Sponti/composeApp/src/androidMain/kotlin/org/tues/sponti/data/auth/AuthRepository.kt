@@ -1,5 +1,6 @@
 package org.tues.sponti.data.auth
 
+import android.util.Log
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.data.network.SignupRequest

@@ -5,7 +5,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class SignupRequest(val username: String, val email: String, val password: String)
-data class SignupResponse(val id: String?, val message: String?)
+data class SignupResponse(
+    val id: String?,
+    val email: String?,
+    val statusCode: Int?,
+    val error: String?
+)
 
 interface ApiService {
     @POST("/auth/signup")

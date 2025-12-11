@@ -1,5 +1,6 @@
 package org.tues.sponti.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.tues.sponti.BuildConfig
 import org.tues.sponti.R
 import org.tues.sponti.data.auth.AuthRepository
 import org.tues.sponti.ui.components.ButtonSize

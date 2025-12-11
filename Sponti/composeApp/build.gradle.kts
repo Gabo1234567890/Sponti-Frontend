@@ -39,6 +39,7 @@ kotlin {
             implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
             implementation("com.squareup.okhttp3:okhttp:4.10.0")
             implementation("com.squareup.moshi:moshi:1.15.0")
+            implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
