@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import org.tues.sponti.ui.screens.CreateAccountScreen
+import androidx.navigation.compose.rememberNavController
+import org.tues.sponti.navigation.AppNavGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +13,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            CreateAccountScreen(onNavigateToLogin = {}, onSuccess = {})
+            val navController = rememberNavController()
+
+            AppNavGraph(navController = navController)
         }
     }
 }

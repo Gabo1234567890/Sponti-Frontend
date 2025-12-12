@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.okhttp)
             implementation(libs.moshi)
             implementation(libs.moshi.kotlin)
+            implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
