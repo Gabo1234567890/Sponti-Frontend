@@ -198,15 +198,15 @@ fun CreateAccountScreen(
                 emailError = ""
                 passwordError = ""
                 when {
-                    username.isBlank() -> usernameError = "Username is empty"
+                    username.isBlank() -> usernameError = R.string.emptyUsername.toString()
 
                     !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailError =
-                        "Invalid email address"
+                        R.string.invalidEmail.toString()
 
-                    password.length < 8 -> passwordError = "Password must be at least 8 characters"
+                    password.length < 8 -> passwordError = R.string.shortPassword.toString()
 
                     !password.containsAllCharacterTypes() -> passwordError =
-                        "Password must contain uppercase, lowercase, number and symbol"
+                        R.string.weakPassword.toString()
 
                     else -> {
                         isSubmitting = true
@@ -229,7 +229,8 @@ fun CreateAccountScreen(
                                             || parsedError?.error?.lowercase()
                                                 ?.contains("username") == true
                                         ) usernameError = parsedError.getMessage()
-                                            ?: parsedError.error ?: "Unknown username error"
+                                            ?: parsedError.error
+                                                    ?: R.string.unknownUsernameError.toString()
                                         else if (
                                             parsedError?.getMessage()?.lowercase()
                                                 ?.contains("email") == true
@@ -237,22 +238,25 @@ fun CreateAccountScreen(
                                                 ?.contains("email") == true
                                         ) {
                                             emailError = parsedError.getMessage()
-                                                ?: parsedError.error ?: "Unknown email error"
+                                                ?: parsedError.error
+                                                        ?: R.string.unknownEmailError.toString()
                                         } else if (
                                             parsedError?.getMessage()?.lowercase()
                                                 ?.contains("password") == true
                                             || parsedError?.error?.lowercase()
                                                 ?.contains("password") == true
                                         ) passwordError = parsedError.getMessage()
-                                            ?: parsedError.error ?: "Unknown password error"
+                                            ?: parsedError.error
+                                                    ?: R.string.unknownPasswordError.toString()
                                         else snackBarHostState.showSnackbar(
                                             message = parsedError?.getMessage()
-                                                ?: parsedError?.error ?: "Unknown error"
+                                                ?: parsedError?.error
+                                                ?: R.string.unknownError.toString()
                                         )
                                     }
                                 }
                             } catch (e: Exception) {
-                                val error = e.localizedMessage ?: "Network error"
+                                val error = e.localizedMessage ?: R.string.networkError.toString()
                                 snackBarHostState.showSnackbar(message = error)
                             } finally {
                                 isSubmitting = false
