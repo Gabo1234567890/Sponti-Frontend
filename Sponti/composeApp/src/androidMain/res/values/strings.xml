@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Sponti</string>
+    <string name="emptyUsername">Username is empty</string>
+    <string name="invalidEmail">Invalid email address</string>
+    <string name="shortPassword">Password must be at least 8 characters</string>
+    <string name="weakPassword">Password must contain uppercase, lowercase, number and symbol</string>
+    <string name="unknownUsernameError">Unknown username error</string>
+    <string name="unknownEmailError">Unknown email error</string>
+    <string name="unknownPasswordError">Unknown password error</string>
+    <string name="unknownError">Unknown error</string>
+    <string name="networkError">Network error</string>
 </resources>
