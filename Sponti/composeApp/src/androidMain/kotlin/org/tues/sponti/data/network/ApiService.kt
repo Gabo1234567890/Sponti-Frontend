@@ -19,7 +19,14 @@ data class ErrorResponse(val message: Any?, val error: String?, val statusCode: 
 data class SignupRequest(val username: String, val email: String, val password: String)
 data class SignupResponse(val id: String?, val email: String?, val statusCode: Int?)
 
+data class LoginRequest(val email: String, val password: String)
+
+data class LoginResponse(val accessToken: String?, val refreshToken: String?)
+
 interface ApiService {
     @POST("/auth/signup")
     suspend fun signup(@Body req: SignupRequest): Response<SignupResponse>
+
+    @POST("/auth/login")
+    suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
 }
