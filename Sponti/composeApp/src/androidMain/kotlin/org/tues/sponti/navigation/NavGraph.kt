@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.tues.sponti.ui.screens.CreateAccountScreen
+import org.tues.sponti.ui.screens.LogInScreen
 
 @Composable
 fun AppNavGraph(
@@ -19,7 +20,14 @@ fun AppNavGraph(
                 onSuccess = { navController.navigate(Routes.VERIFY_EMAIL) })
         }
 
-        composable(Routes.LOGIN) { }
+        composable(Routes.LOGIN) {
+            LogInScreen(
+                onNavigateToCreateAccount = { navController.navigate(Routes.CREATE_ACCOUNT) },
+                onNavigateToForgotPassword = {},
+                onSuccess = {}
+            )
+        }
+
         composable(Routes.VERIFY_EMAIL) { }
     }
 }
