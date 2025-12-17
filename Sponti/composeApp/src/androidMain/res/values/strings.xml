@@ -9,4 +9,6 @@
     <string name="unknownPasswordError">Unknown password error</string>
     <string name="unknownError">Unknown error</string>
     <string name="networkError">Network error</string>
+    <string name="unknownLoginError">Unknown login error</string>
+    <string name="invalidLoginResponse">Invalid login response</string>
 </resources>
