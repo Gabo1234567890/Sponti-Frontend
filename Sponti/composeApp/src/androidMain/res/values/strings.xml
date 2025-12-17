@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Sponti</string>
+
     <string name="emptyUsername">Username is empty</string>
     <string name="invalidEmail">Invalid email address</string>
     <string name="shortPassword">Password must be at least 8 characters</string>
@@ -11,4 +12,17 @@
     <string name="networkError">Network error</string>
     <string name="unknownLoginError">Unknown login error</string>
     <string name="invalidLoginResponse">Invalid login response</string>
+
+    <string name="verificationTitle">Email Verification</string>
+    <string name="verificationInboxMessage">Check your inbox to find the email verification link!</string>
+    <string name="verificationSuccessTitle">Email Verified</string>
+    <string name="verificationSuccessMessage">You have successfully verified your email!</string>
+    <string name="verificationFailureTitle">Email Verification Failed</string>
+    <string name="verificationFailureMessage">An error occurred while trying to verify your email!</string>
+    <string name="forgotPassTitle">Forgot Password</string>
+    <string name="forgotPassInboxMessage">Check your inbox to find the password reset link!</string>
+    <string name="forgotPassSuccessTitle">Password Changed</string>
+    <string name="forgotPassSuccessMessage">You have successfully set a new password!</string>
+    <string name="forgotPassFailureTitle">Password Change Failed</string>
+    <string name="forgotPassFailureMessage">An error occurred while trying to change your password!</string>
 </resources>
