@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
-import org.tues.sponti.ui.screens.LogInScreen
+import org.tues.sponti.ui.screens.login.LogInScreen
 
 @Composable
 fun AppNavGraph(
