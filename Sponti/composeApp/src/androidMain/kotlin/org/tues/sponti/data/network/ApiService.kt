@@ -1,18 +1,23 @@
 package org.tues.sponti.data.network
 
 import com.squareup.moshi.JsonClass
+import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 @JsonClass(generateAdapter = true)
-data class ErrorResponse(val message: Any?, val error: String?, val statusCode: Int?){
+data class ErrorResponse(val message: Any?, val error: String?, val statusCode: Int?) {
     fun getMessage(): String? {
-        return when(message) {
+        return when (message) {
             is String -> message
             is List<*> -> message.firstOrNull()?.toString()
             else -> null
         }
+    }
+
+    fun toFieldError(): FieldError {
+        return (getMessage() ?: error)?.let { FieldError.Server(it) } ?: FieldError.Unknown
     }
 }
 
