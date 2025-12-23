@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.R
 import org.tues.sponti.ui.components.StepIndicator
@@ -25,14 +26,15 @@ import org.tues.sponti.ui.theme.Primary1
 @Composable
 fun CheckInboxScreen(
     title: String,
-    inboxMessage: String
+    inboxMessage: String,
+    modifier: Modifier = Modifier
 ) {
     val forgotPass = title.lowercase() == "forgot password"
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .background(Base0)
@@ -46,7 +48,7 @@ fun CheckInboxScreen(
             Text(text = title, style = Heading3, color = Primary1)
         }
         Spacer(Modifier.height(100.dp))
-        Text(text = inboxMessage, style = Heading4, color = Base100)
+        Text(text = inboxMessage, style = Heading4, color = Base100, textAlign = TextAlign.Center)
         if(forgotPass) {
             Spacer(Modifier.height(100.dp))
             StepIndicator(3, 1)

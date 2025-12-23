@@ -36,14 +36,15 @@ fun StatusScreen(
     headline: String,
     description: String,
     buttonText: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val fail = headline.lowercase().contains("failed")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .background(Base0)

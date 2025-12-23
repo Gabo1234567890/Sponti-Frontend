@@ -12,6 +12,7 @@
     <string name="networkError">Network error</string>
     <string name="unknownLoginError">Unknown login error</string>
     <string name="invalidLoginResponse">Invalid login response</string>
+    <string name="notMatchingPasswords">Passwords do not match</string>
 
     <string name="verificationTitle">Email Verification</string>
     <string name="verificationInboxMessage">Check your inbox to find the email verification link!</string>
