@@ -4,7 +4,9 @@ import com.squareup.moshi.JsonClass
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 @JsonClass(generateAdapter = true)
 data class ErrorResponse(val message: Any?, val error: String?, val statusCode: Int?) {
@@ -28,10 +30,36 @@ data class LoginRequest(val email: String, val password: String)
 
 data class LoginResponse(val accessToken: String?, val refreshToken: String?)
 
+data class RequestPasswordResetRequest(val email: String)
+
+data class RequestPasswordResetResponse(val message: String?)
+
+data class ResetPasswordRequest(val password: String)
+
+data class ResetPasswordResponse(val message: String?)
+
+data class VerifyEmailResponse(val message: String?)
+
 interface ApiService {
     @POST("/auth/signup")
     suspend fun signup(@Body req: SignupRequest): Response<SignupResponse>
 
     @POST("/auth/login")
     suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
+
+    @POST("/auth/request-password-reset")
+    suspend fun requestPasswordReset(@Body req: RequestPasswordResetRequest): Response<RequestPasswordResetResponse>
+
+    @POST("/auth/reset-password")
+    suspend fun resetPassword(
+        @Query("token") token: String,
+        @Query("email") email: String,
+        @Body req: ResetPasswordRequest
+    ): Response<ResetPasswordResponse>
+
+    @GET("/auth/verify-email")
+    suspend fun verifyEmail(
+        @Query("token") token: String,
+        @Query("email") email: String
+    ): Response<VerifyEmailResponse>
 }

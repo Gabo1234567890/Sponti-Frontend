@@ -27,6 +27,11 @@ fun FieldError.toUiText(field: FieldType): String = when (this) {
         else -> stringResource(R.string.unknownError)
     }
 
+    FieldError.NoMatch -> when (field) {
+        FieldType.PASSWORD -> stringResource(R.string.notMatchingPasswords)
+        else -> stringResource(R.string.unknownError)
+    }
+
     FieldError.Unknown -> when (field) {
         FieldType.USERNAME -> stringResource(R.string.unknownUsernameError)
         FieldType.EMAIL -> stringResource(R.string.unknownEmailError)
