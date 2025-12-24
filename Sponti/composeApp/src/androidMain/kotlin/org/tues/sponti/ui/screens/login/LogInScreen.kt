@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.tues.sponti.R
+import org.tues.sponti.SpontiApp
 import org.tues.sponti.data.auth.AuthRepository
-import org.tues.sponti.data.auth.AuthTokenStoreImplementation
 import org.tues.sponti.ui.components.ButtonSize
 import org.tues.sponti.ui.components.ButtonState
 import org.tues.sponti.ui.components.InputField
@@ -55,18 +55,17 @@ fun LogInScreen(
     onNavigateToCreateAccount: () -> Unit,
     onNavigateToForgotPassword: () -> Unit
 ) {
-    val context = LocalContext.current
+    val app = LocalContext.current.applicationContext as SpontiApp
 
-    val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        factory = object : ViewModelProvider.Factory {
+    val viewModel: LoginViewModel =
+        androidx.lifecycle.viewmodel.compose.viewModel(factory = object :
+            ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return LoginViewModel(
-                    authRepository = AuthRepository(),
-                    tokenStore = AuthTokenStoreImplementation(context)
+                    authRepository = AuthRepository(), sessionManager = app.sessionManager
                 ) as T
             }
-        }
-    )
+        })
     val state by viewModel.state.collectAsState()
 
     val focusManager = LocalFocusManager.current
@@ -106,8 +105,7 @@ fun LogInScreen(
             .padding(horizontal = 16.dp)
             .background(Base0),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+        verticalArrangement = Arrangement.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.logo_name),
@@ -160,13 +158,7 @@ fun LogInScreen(
             PrimaryButton(
                 text = "Log In",
                 size = ButtonSize.Large,
-                state = if (
-                    state.isSubmitting
-                    || state.email.isEmpty()
-                    || state.password.isEmpty()
-                    || state.emailError != null
-                    || state.passwordError != null
-                ) ButtonState.Disabled
+                state = if (state.isSubmitting || state.email.isEmpty() || state.password.isEmpty() || state.emailError != null || state.passwordError != null) ButtonState.Disabled
                 else ButtonState.Active
             ) {
                 focusManager.clearFocus()

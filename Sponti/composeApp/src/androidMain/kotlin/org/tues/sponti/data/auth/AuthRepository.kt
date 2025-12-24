@@ -3,6 +3,8 @@ package org.tues.sponti.data.auth
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.LoginRequest
 import org.tues.sponti.data.network.LoginResponse
+import org.tues.sponti.data.network.RefreshTokensRequest
+import org.tues.sponti.data.network.RefreshTokensResponse
 import org.tues.sponti.data.network.RequestPasswordResetRequest
 import org.tues.sponti.data.network.RequestPasswordResetResponse
 import org.tues.sponti.data.network.ResetPasswordRequest
@@ -44,5 +46,10 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api) {
 
     suspend fun verifyEmail(token: String, email: String): Response<VerifyEmailResponse> {
         return api.verifyEmail(token, email)
+    }
+
+    suspend fun refreshTokens(refreshToken: String): Response<RefreshTokensResponse> {
+        val req = RefreshTokensRequest(refreshToken)
+        return api.refreshTokens(req)
     }
 }

@@ -40,6 +40,10 @@ data class ResetPasswordResponse(val message: String?)
 
 data class VerifyEmailResponse(val message: String?)
 
+data class RefreshTokensRequest(val refreshToken: String?)
+
+data class RefreshTokensResponse(val accessToken: String?, val refreshToken: String?)
+
 interface ApiService {
     @POST("/auth/signup")
     suspend fun signup(@Body req: SignupRequest): Response<SignupResponse>
@@ -62,4 +66,7 @@ interface ApiService {
         @Query("token") token: String,
         @Query("email") email: String
     ): Response<VerifyEmailResponse>
+
+    @POST("/auth/refresh")
+    suspend fun refreshTokens(@Body req: RefreshTokensRequest): Response<RefreshTokensResponse>
 }

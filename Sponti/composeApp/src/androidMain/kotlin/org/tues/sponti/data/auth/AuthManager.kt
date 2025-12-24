@@ -3,7 +3,7 @@ package org.tues.sponti.data.auth
 import android.content.Context
 import androidx.core.content.edit
 
-class AuthManager(private val context: Context) {
+class AuthManager(context: Context) {
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     fun saveTokens(accessToken: String, refreshToken: String) {

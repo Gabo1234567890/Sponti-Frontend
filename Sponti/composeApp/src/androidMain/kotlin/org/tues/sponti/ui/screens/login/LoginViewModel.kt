@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.tues.sponti.data.auth.AuthRepository
-import org.tues.sponti.data.auth.AuthTokenStore
+import org.tues.sponti.data.auth.SessionManager
 import org.tues.sponti.data.network.ErrorResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.ui.screens.common.FieldError
@@ -14,7 +14,7 @@ import org.tues.sponti.ui.screens.common.containsAllCharacterTypes
 
 class LoginViewModel(
     private val authRepository: AuthRepository = AuthRepository(),
-    private val tokenStore: AuthTokenStore
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -61,7 +61,7 @@ class LoginViewModel(
                     val body = resp.body()
 
                     if (body?.accessToken != null && body.refreshToken != null) {
-                        tokenStore.save(
+                        sessionManager.login(
                             accessToken = body.accessToken,
                             refreshToken = body.refreshToken
                         )
