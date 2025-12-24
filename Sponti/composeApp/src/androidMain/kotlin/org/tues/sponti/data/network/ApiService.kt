@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonClass
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -37,6 +38,8 @@ data class ResetPasswordRequest(val password: String)
 
 data class ResetPasswordResponse(val message: String?)
 
+data class VerifyEmailResponse(val message: String?)
+
 interface ApiService {
     @POST("/auth/signup")
     suspend fun signup(@Body req: SignupRequest): Response<SignupResponse>
@@ -53,4 +56,10 @@ interface ApiService {
         @Query("email") email: String,
         @Body req: ResetPasswordRequest
     ): Response<ResetPasswordResponse>
+
+    @GET("/auth/verify-email")
+    suspend fun verifyEmail(
+        @Query("token") token: String,
+        @Query("email") email: String
+    ): Response<VerifyEmailResponse>
 }

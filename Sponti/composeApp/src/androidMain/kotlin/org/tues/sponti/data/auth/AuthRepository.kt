@@ -10,6 +10,7 @@ import org.tues.sponti.data.network.ResetPasswordResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.data.network.SignupRequest
 import org.tues.sponti.data.network.SignupResponse
+import org.tues.sponti.data.network.VerifyEmailResponse
 import retrofit2.Response
 
 class AuthRepository(private val api: ApiService = RetrofitClient.api) {
@@ -39,5 +40,9 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api) {
     ): Response<ResetPasswordResponse> {
         val req = ResetPasswordRequest(password)
         return api.resetPassword(token, email, req)
+    }
+
+    suspend fun verifyEmail(token: String, email: String): Response<VerifyEmailResponse> {
+        return api.verifyEmail(token, email)
     }
 }
