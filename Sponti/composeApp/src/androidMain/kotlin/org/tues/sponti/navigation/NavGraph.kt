@@ -29,7 +29,11 @@ fun AppNavGraph(
             LogInScreen(
                 onNavigateToCreateAccount = { navController.navigate(Routes.CREATE_ACCOUNT) },
                 onNavigateToForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) },
-                onSuccess = {})
+                onSuccess = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(0)
+                    }
+                })
         }
 
         composable(
@@ -75,6 +79,10 @@ fun AppNavGraph(
                 onBackToLogin = { navController.navigate(Routes.LOGIN) },
                 backStackEntry = backStackEntry
             )
+        }
+
+        composable(route = Routes.MAIN) {
+            ProtectedRoot(navController = navController)
         }
     }
 }
