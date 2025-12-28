@@ -21,6 +21,7 @@ import org.tues.sponti.ui.theme.Base0
 @Composable
 fun DropdownFilterPopup(
     iconId: Int,
+    label: String,
     options: List<String>,
     onApply: (Set<String>) -> Unit
 ) {
@@ -40,7 +41,20 @@ fun DropdownFilterPopup(
             .zIndex(1f)
     ) {
         Column {
+            IconDropdownInputField(
+                iconId = iconId,
+                label = label,
+                options = options,
+                selected = selected
+            ) { selected = it }
 
+            PrimaryButton(
+                text = "Search",
+                size = ButtonSize.Small,
+                state = if (selected.isEmpty()) ButtonState.Disabled else ButtonState.Active
+            ) {
+                onApply(selected)
+            }
         }
     }
 }
