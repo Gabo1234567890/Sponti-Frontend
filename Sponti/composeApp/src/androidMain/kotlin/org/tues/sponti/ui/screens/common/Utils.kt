@@ -8,3 +8,11 @@ fun String.containsAllCharacterTypes(): Boolean {
 
     return hasLowercase && hasUppercase && hasDigit && hasSpecialChar
 }
+
+fun Int.minutesToFormattedTimeString(): String {
+    val hours = this / 60
+
+    return if (hours < 10) {
+        "0$hours:${this % 60}"
+    } else "$hours:${this % 60}"
+}
