@@ -16,6 +16,10 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
+    init {
+        fetchChallenges()
+    }
+
     fun openFilter(type: FilterType) {
         _state.update { it.copy(activePopUp = type) }
     }

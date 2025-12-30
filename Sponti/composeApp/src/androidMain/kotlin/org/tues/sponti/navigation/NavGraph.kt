@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
+import org.tues.sponti.ui.screens.home.HomeScreen
 import org.tues.sponti.ui.screens.login.LogInScreen
 import org.tues.sponti.ui.screens.verifyemail.VerifyEmailScreens
 
@@ -30,7 +31,7 @@ fun AppNavGraph(
                 onNavigateToCreateAccount = { navController.navigate(Routes.CREATE_ACCOUNT) },
                 onNavigateToForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) },
                 onSuccess = {
-                    navController.navigate(Routes.MAIN) {
+                    navController.navigate(Routes.HOME) {
                         popUpTo(0)
                     }
                 })
@@ -81,8 +82,10 @@ fun AppNavGraph(
             )
         }
 
-        composable(route = Routes.MAIN) {
-            ProtectedRoot(navController = navController)
+        composable(route = Routes.HOME) {
+            ProtectedScaffold(navController) {
+                HomeScreen(navController)
+            }
         }
     }
 }

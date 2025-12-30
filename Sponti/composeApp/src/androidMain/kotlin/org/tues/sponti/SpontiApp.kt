@@ -1,6 +1,7 @@
 package org.tues.sponti
 
 import android.app.Application
+import org.tues.sponti.data.auth.AuthApi
 import org.tues.sponti.data.auth.AuthManager
 import org.tues.sponti.data.auth.AuthRepository
 import org.tues.sponti.data.auth.SessionManager
@@ -15,11 +16,18 @@ class SpontiApp: Application() {
 
         val authManager = AuthManager(applicationContext)
 
+        lateinit var authApi: AuthApi
+
         sessionManager = SessionManager(
             authManager = authManager,
-            authRepository = AuthRepository()
+            authApi = object : AuthApi {
+                override suspend fun refreshTokens(refreshToken: String) =
+                    authApi.refreshTokens(refreshToken)
+            }
         )
 
         RetrofitClient.init(sessionManager)
+
+        authApi = AuthRepository()
     }
 }

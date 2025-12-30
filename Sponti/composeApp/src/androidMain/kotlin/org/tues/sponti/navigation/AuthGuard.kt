@@ -20,7 +20,7 @@ fun AuthGuard(
     when (isLoggedIn) {
         null -> Unit
         false -> LaunchedEffect(Unit) {
-            navController.navigate("login") {
+            navController.navigate(Routes.LOGIN) {
                 popUpTo(0)
             }
         }

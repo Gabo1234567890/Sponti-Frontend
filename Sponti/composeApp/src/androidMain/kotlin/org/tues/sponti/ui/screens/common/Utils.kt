@@ -11,8 +11,10 @@ fun String.containsAllCharacterTypes(): Boolean {
 
 fun Int.minutesToFormattedTimeString(): String {
     val hours = this / 60
+    val minutes = this % 60
 
-    return if (hours < 10) {
-        "0$hours:${this % 60}"
-    } else "$hours:${this % 60}"
+    val formattedHours = if (hours < 10) "0$hours" else hours.toString()
+    val formattedMinutes = if (minutes < 10) "0$minutes" else minutes.toString()
+
+    return "$formattedHours:$formattedMinutes"
 }

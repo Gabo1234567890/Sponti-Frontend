@@ -9,8 +9,6 @@ object Routes {
 
     const val FORGOT_PASSWORD = "forgot-password"
 
-    const val MAIN = "main"
-
     const val ADD = "add"
 
     const val HOME = "home"
