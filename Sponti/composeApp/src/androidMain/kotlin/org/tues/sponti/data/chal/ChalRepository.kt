@@ -3,8 +3,7 @@ package org.tues.sponti.data.chal
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.FetchChallengesByFiltersResponse
 import org.tues.sponti.data.network.RetrofitClient
-import org.tues.sponti.ui.screens.common.PlaceType
-import org.tues.sponti.ui.screens.common.VehicleType
+import org.tues.sponti.ui.screens.common.ChallengeType
 import retrofit2.Response
 
 class ChalRepository(private val api: ApiService = RetrofitClient.api) {

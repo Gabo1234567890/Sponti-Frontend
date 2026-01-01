@@ -11,6 +11,7 @@ import org.tues.sponti.data.network.ErrorResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.ui.screens.common.FieldError
 import org.tues.sponti.ui.screens.common.FilterType
+import org.tues.sponti.ui.screens.common.toUi
 
 class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository()) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
@@ -121,8 +122,8 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
                 if (resp.isSuccessful) {
                     val body = resp.body()
 
-                    if (body?.items != null && body.items.isNotEmpty()) {
-                        _state.update { it.copy(challenges = body.items) }
+                    if (body?.items != null) {
+                        _state.update { it.copy(challenges = body.items.map { dto -> dto.toUi() }) }
                     }
                 } else {
                     val errorJson = resp.errorBody()?.string()

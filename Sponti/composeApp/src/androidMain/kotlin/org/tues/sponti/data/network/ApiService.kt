@@ -1,7 +1,7 @@
 package org.tues.sponti.data.network
 
 import com.squareup.moshi.JsonClass
-import org.tues.sponti.ui.screens.common.ChallengeType
+import org.tues.sponti.data.chal.ChallengeDto
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
@@ -45,8 +45,9 @@ data class RefreshTokensRequest(val refreshToken: String)
 
 data class RefreshTokensResponse(val accessToken: String?, val refreshToken: String?)
 
+@JsonClass(generateAdapter = true)
 data class FetchChallengesByFiltersResponse(
-    val items: List<ChallengeType>?,
+    val items: List<ChallengeDto>?,
     val count: Int?,
     val page: Int?,
     val perPage: Int?

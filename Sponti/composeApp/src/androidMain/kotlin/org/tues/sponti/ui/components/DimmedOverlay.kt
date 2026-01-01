@@ -7,15 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.zIndex
 
 @Composable
-fun DimmedOverlay(onDismiss: () -> Unit) {
+fun DimmedOverlay(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = Color.Black.copy(alpha = 0.2f))
             .clickable(onClick = onDismiss)
-            .zIndex(0.5f)
     )
 }

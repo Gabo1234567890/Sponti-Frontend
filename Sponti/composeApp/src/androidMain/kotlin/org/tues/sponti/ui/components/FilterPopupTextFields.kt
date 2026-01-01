@@ -17,12 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import org.tues.sponti.ui.theme.Base0
 
 @Composable
 fun TextFieldsFilterPopup(
-    iconId: Int, minLabel: String, maxLabel: String, maxDigits: Int, onApply: (Int?, Int?) -> Unit
+    iconId: Int,
+    minLabel: String,
+    maxLabel: String,
+    maxDigits: Int,
+    onApply: (Int?, Int?) -> Unit
 ) {
     var min by remember { mutableStateOf("") }
     var max by remember { mutableStateOf("") }
@@ -39,7 +42,6 @@ fun TextFieldsFilterPopup(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 16.dp)
             .graphicsLayer {
                 shadowElevation = 16.dp.toPx()
                 shape = RoundedCornerShape(16.dp)
@@ -47,7 +49,8 @@ fun TextFieldsFilterPopup(
             }
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Base0)
-            .zIndex(1f)) {
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+    ) {
         Column {
             IconInputField(
                 iconId = iconId,
@@ -77,6 +80,7 @@ fun TextFieldsFilterPopup(
                 text = "Search",
                 size = ButtonSize.Small,
                 state = if (valid) ButtonState.Active else ButtonState.Disabled,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 onApply(minVal, maxVal)
             }

@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -34,8 +33,6 @@ import org.tues.sponti.ui.theme.Caption1
 import org.tues.sponti.ui.theme.Heading6
 import org.tues.sponti.ui.theme.Heading8
 import org.tues.sponti.ui.theme.Primary1
-import java.util.Locale
-import java.util.Locale.getDefault
 
 @Composable
 fun ChallengeCard(
@@ -44,7 +41,6 @@ fun ChallengeCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(all = 16.dp)
             .graphicsLayer {
                 shadowElevation = 16.dp.toPx()
                 shape = RoundedCornerShape(20.dp)
@@ -52,6 +48,7 @@ fun ChallengeCard(
             }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(color = Base0)
+            .padding(all = 16.dp)
             .clickable(onClick = onClick)) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(

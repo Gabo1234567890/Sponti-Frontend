@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,12 +25,10 @@ import org.tues.sponti.ui.theme.Primary1
 
 @Composable
 fun FilterButton(
-    iconId: Int, label: String, selected: Boolean, onClick: () -> Unit
+    iconId: Int, label: String, modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+        modifier = modifier
             .graphicsLayer {
                 shadowElevation = 16.dp.toPx()
                 shape = RoundedCornerShape(16.dp)
@@ -40,7 +37,7 @@ fun FilterButton(
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Base0)
             .clickable(onClick = onClick)
-            .zIndex(if (selected) 1f else 0f),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Row {

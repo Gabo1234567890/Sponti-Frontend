@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -82,31 +84,34 @@ fun IconDropdownInputField(
                 )
             }
         }
-
+        Spacer(Modifier.height(4.dp))
         AnimatedVisibility(visible = expanded) {
             Column(
                 modifier = Modifier
                     .border(BorderStroke(1.dp, Base80), RoundedCornerShape(12.dp))
                     .background(color = Base0)
             ) {
-                options.forEach { option ->
+                options.forEachIndexed { index, option ->
                     val isSelected = option in selected
+
+                    if (index > 0) {
+                        HorizontalDivider(thickness = 1.dp, color = Base80)
+                    }
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(BorderStroke(1.dp, Base80))
+                            .height(16.dp)
                             .background(Base0)
                             .clickable {
-                                val newSelection =
-                                    if (isSelected) selected - option else selected + option
+                                val newSelection = if (isSelected) selected - option
+                                else selected + option
 
                                 onSelectedChange(newSelection)
                             }
                             .padding(horizontal = 8.dp, vertical = 12.dp),
 
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                        verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = option,
                             style = Caption1,
@@ -114,7 +119,7 @@ fun IconDropdownInputField(
                             modifier = Modifier.weight(1f)
                         )
 
-                        if(isSelected) {
+                        if (isSelected) {
                             Icon(
                                 painter = painterResource(R.drawable.tick),
                                 contentDescription = "Added",

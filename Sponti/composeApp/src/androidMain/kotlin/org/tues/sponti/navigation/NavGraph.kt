@@ -1,6 +1,8 @@
 package org.tues.sponti.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -9,6 +11,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
+import org.tues.sponti.ui.screens.home.HomeRoute
 import org.tues.sponti.ui.screens.home.HomeScreen
 import org.tues.sponti.ui.screens.login.LogInScreen
 import org.tues.sponti.ui.screens.verifyemail.VerifyEmailScreens
@@ -83,9 +86,7 @@ fun AppNavGraph(
         }
 
         composable(route = Routes.HOME) {
-            ProtectedScaffold(navController) {
-                HomeScreen(navController)
-            }
+            HomeRoute(navController)
         }
     }
 }

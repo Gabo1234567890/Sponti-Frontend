@@ -1,5 +1,6 @@
 package org.tues.sponti.ui.screens.main
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,13 +11,14 @@ import org.tues.sponti.ui.components.BottomBar
 import org.tues.sponti.ui.components.PrimaryTopBar
 
 @Composable
-fun MainScaffold(navController: NavHostController, content: @Composable () -> Unit) {
+fun MainScaffold(navController: NavHostController, content: @Composable (PaddingValues) -> Unit) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ""
 
     Scaffold(topBar = {
         PrimaryTopBar(
-            onSettings = { navController.navigate(Routes.SETTINGS) }, title = currentRoute
+            onSettings = { navController.navigate(Routes.SETTINGS) },
+            title = currentRoute.replaceFirstChar { it.uppercase() }
         )
     }, bottomBar = {
         BottomBar(
@@ -29,7 +31,7 @@ fun MainScaffold(navController: NavHostController, content: @Composable () -> Un
                     }
                 }
             })
-    }) {
-        content()
+    }) { paddingValues ->
+        content(paddingValues)
     }
 }

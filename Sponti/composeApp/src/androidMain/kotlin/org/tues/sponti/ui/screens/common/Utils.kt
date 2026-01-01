@@ -1,5 +1,7 @@
 package org.tues.sponti.ui.screens.common
 
+import org.tues.sponti.data.chal.ChallengeDto
+
 fun String.containsAllCharacterTypes(): Boolean {
     val hasLowercase = Regex("[a-z]").containsMatchIn(this)
     val hasUppercase = Regex("[A-Z]").containsMatchIn(this)
@@ -17,4 +19,18 @@ fun Int.minutesToFormattedTimeString(): String {
     val formattedMinutes = if (minutes < 10) "0$minutes" else minutes.toString()
 
     return "$formattedHours:$formattedMinutes"
+}
+
+fun ChallengeDto.toUi(): ChallengeType {
+    return ChallengeType(
+        id = id,
+        title = title,
+        description = description,
+        thumbnailUrl = thumbnailUrl,
+        price = price,
+        duration = durationMinutes,
+        place = place,
+        vehicle = vehicle,
+        placeType = placeType
+    )
 }

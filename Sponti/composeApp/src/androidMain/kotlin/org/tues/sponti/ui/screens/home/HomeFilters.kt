@@ -1,7 +1,7 @@
 package org.tues.sponti.ui.screens.home
 
-import org.tues.sponti.ui.screens.common.PlaceType
-import org.tues.sponti.ui.screens.common.VehicleType
+import org.tues.sponti.data.chal.PlaceType
+import org.tues.sponti.data.chal.VehicleType
 
 sealed class HomeFilter {
     data class Price(val min: Int?, val max: Int?) : HomeFilter()
