@@ -15,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import org.tues.sponti.ui.theme.Base0
 import org.tues.sponti.ui.theme.Heading8
 import org.tues.sponti.ui.theme.Primary1
@@ -29,18 +29,19 @@ fun FilterButton(
 ) {
     Box(
         modifier = modifier
-            .graphicsLayer {
-                shadowElevation = 16.dp.toPx()
-                shape = RoundedCornerShape(16.dp)
-                clip = false
-            }
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(16.dp),
+                clip = false,
+                spotColor = Color.Black.copy(alpha = 0.1f)
+            )
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Base0)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(iconId),
                 contentDescription = label,

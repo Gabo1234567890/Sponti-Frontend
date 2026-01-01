@@ -51,55 +51,58 @@ fun HomeRoute(navController: NavHostController) {
 
             Box(
                 modifier = Modifier
-                    .pointerInput(Unit) { detectTapGestures { } }
                     .padding(start = 16.dp, end = 16.dp, top = 160.dp)
                     .align(Alignment.TopCenter)
                     .zIndex(2f)
             ) {
-                state.activePopUp?.let { active ->
-                    when (active) {
-                        FilterType.PRICE -> TextFieldsFilterPopup(
-                            iconId = R.drawable.price,
-                            minLabel = "Min price",
-                            maxLabel = "Max price",
-                            maxDigits = 3
-                        ) { min: Int?, max: Int? -> viewModel.applyFilter(Price(min, max)) }
+                Box(
+                    modifier = Modifier.pointerInput(Unit) { detectTapGestures { } }
+                ) {
+                    state.activePopUp?.let { active ->
+                        when (active) {
+                            FilterType.PRICE -> TextFieldsFilterPopup(
+                                iconId = R.drawable.price,
+                                minLabel = "Min price",
+                                maxLabel = "Max price",
+                                maxDigits = 3
+                            ) { min: Int?, max: Int? -> viewModel.applyFilter(Price(min, max)) }
 
-                        FilterType.DURATION -> TextFieldsFilterPopup(
-                            iconId = R.drawable.time,
-                            minLabel = "Min time duration",
-                            maxLabel = "Max time duration",
-                            maxDigits = 3
-                        ) { min: Int?, max: Int? ->
-                            viewModel.applyFilter(
-                                Duration(
-                                    min, max
+                            FilterType.DURATION -> TextFieldsFilterPopup(
+                                iconId = R.drawable.time,
+                                minLabel = "Min time duration",
+                                maxLabel = "Max time duration",
+                                maxDigits = 3
+                            ) { min: Int?, max: Int? ->
+                                viewModel.applyFilter(
+                                    Duration(
+                                        min, max
+                                    )
                                 )
-                            )
-                        }
+                            }
 
-                        FilterType.VEHICLE -> DropdownFilterPopup(
-                            iconId = R.drawable.vehicle,
-                            label = "Vehicles...",
-                            options = VehicleType.entries.map { vehicleType ->
-                                vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
-                            }) { selected: Set<String> ->
-                            viewModel.applyFilter(Vehicle(selected.map {
-                                VehicleType.valueOf(
-                                    it.uppercase()
-                                )
-                            }.toSet()))
-                        }
+                            FilterType.VEHICLE -> DropdownFilterPopup(
+                                iconId = R.drawable.vehicle,
+                                label = "Vehicles...",
+                                options = VehicleType.entries.map { vehicleType ->
+                                    vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
+                                }) { selected: Set<String> ->
+                                viewModel.applyFilter(Vehicle(selected.map {
+                                    VehicleType.valueOf(
+                                        it.uppercase()
+                                    )
+                                }.toSet()))
+                            }
 
-                        FilterType.PLACE -> DropdownFilterPopup(
-                            iconId = R.drawable.location,
-                            label = "Place types...",
-                            options = PlaceType.entries.map { placeType ->
-                                placeType.name.lowercase().replaceFirstChar { it.uppercase() }
-                            }) { selected: Set<String> ->
-                            viewModel.applyFilter(Place(selected.map {
-                                PlaceType.valueOf(it.uppercase())
-                            }.toSet()))
+                            FilterType.PLACE -> DropdownFilterPopup(
+                                iconId = R.drawable.location,
+                                label = "Place types...",
+                                options = PlaceType.entries.map { placeType ->
+                                    placeType.name.lowercase().replaceFirstChar { it.uppercase() }
+                                }) { selected: Set<String> ->
+                                viewModel.applyFilter(Place(selected.map {
+                                    PlaceType.valueOf(it.uppercase())
+                                }.toSet()))
+                            }
                         }
                     }
                 }

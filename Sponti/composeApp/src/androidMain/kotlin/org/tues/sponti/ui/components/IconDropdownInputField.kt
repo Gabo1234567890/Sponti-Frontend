@@ -101,7 +101,7 @@ fun IconDropdownInputField(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(16.dp)
+                            .height(40.dp)
                             .background(Base0)
                             .clickable {
                                 val newSelection = if (isSelected) selected - option

@@ -3,7 +3,6 @@ package org.tues.sponti.ui.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +39,11 @@ import org.tues.sponti.ui.theme.Heading4
 import org.tues.sponti.ui.theme.Primary1
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+fun HomeScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
+) {
     val state by viewModel.state.collectAsState()
 
     val focusManager = LocalFocusManager.current
@@ -54,124 +57,121 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, view
         }
     }
 
-    Box(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
             .background(Base0)
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+        item { Spacer(Modifier.height(24.dp)) }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FilterButton(
+                    modifier = Modifier.weight(1f),
+                    iconId = R.drawable.price,
+                    label = "Price"
                 ) {
-                    FilterButton(
-                        modifier = Modifier.weight(1f),
-                        iconId = R.drawable.price,
-                        label = "Price"
-                    ) {
-                        if (state.activePopUp == null) viewModel.openFilter(FilterType.PRICE)
-                        else viewModel.closeFilter()
-                    }
-                    FilterButton(
-                        modifier = Modifier.weight(1f),
-                        iconId = R.drawable.time,
-                        label = "Time"
-                    ) {
-                        if (state.activePopUp == null) viewModel.openFilter(FilterType.DURATION)
-                        else viewModel.closeFilter()
-                    }
-                    FilterButton(
-                        modifier = Modifier.weight(1f),
-                        iconId = R.drawable.vehicle,
-                        label = "Vehicle"
-                    ) {
-                        if (state.activePopUp == null) viewModel.openFilter(FilterType.VEHICLE)
-                        else viewModel.closeFilter()
-                    }
-                    FilterButton(
-                        modifier = Modifier.weight(1f),
-                        iconId = R.drawable.location,
-                        label = "Place"
-                    ) {
-                        if (state.activePopUp == null) viewModel.openFilter(FilterType.PLACE)
-                        else viewModel.closeFilter()
-                    }
+                    if (state.activePopUp == null) viewModel.openFilter(FilterType.PRICE)
+                    else viewModel.closeFilter()
+                }
+                FilterButton(
+                    modifier = Modifier.weight(1f),
+                    iconId = R.drawable.time,
+                    label = "Time"
+                ) {
+                    if (state.activePopUp == null) viewModel.openFilter(FilterType.DURATION)
+                    else viewModel.closeFilter()
+                }
+                FilterButton(
+                    modifier = Modifier.weight(1f),
+                    iconId = R.drawable.vehicle,
+                    label = "Vehicle"
+                ) {
+                    if (state.activePopUp == null) viewModel.openFilter(FilterType.VEHICLE)
+                    else viewModel.closeFilter()
+                }
+                FilterButton(
+                    modifier = Modifier.weight(1f),
+                    iconId = R.drawable.location,
+                    label = "Place"
+                ) {
+                    if (state.activePopUp == null) viewModel.openFilter(FilterType.PLACE)
+                    else viewModel.closeFilter()
                 }
             }
-            if (state.appliedFilters.isNotEmpty()) {
-                item {
-                    Spacer(Modifier.height(20.dp))
-                    FlowRow(maxItemsInEachRow = 3, modifier = Modifier.fillMaxWidth()) {
-                        state.appliedFilters.forEach { filter ->
-                            when (filter) {
-                                is Price -> AppliedFilterChip(
-                                    iconId = R.drawable.price,
-                                    text = "${filter.min ?: 0} - ${filter.max ?: 999}"
-                                ) { viewModel.removeFilter(filter) }
+        }
+        if (state.appliedFilters.isNotEmpty()) {
+            item {
+                Spacer(Modifier.height(20.dp))
+                FlowRow(maxItemsInEachRow = 3, modifier = Modifier.fillMaxWidth()) {
+                    state.appliedFilters.forEach { filter ->
+                        when (filter) {
+                            is Price -> AppliedFilterChip(
+                                iconId = R.drawable.price,
+                                text = "${filter.min ?: 0} - ${filter.max ?: 999}"
+                            ) { viewModel.removeFilter(filter) }
 
-                                is Duration -> AppliedFilterChip(
-                                    iconId = R.drawable.time,
-                                    text = "${filter.min?.minutesToFormattedTimeString() ?: 0.minutesToFormattedTimeString()} - ${filter.max?.minutesToFormattedTimeString() ?: "24:00"}"
-                                ) { viewModel.removeFilter(filter) }
+                            is Duration -> AppliedFilterChip(
+                                iconId = R.drawable.time,
+                                text = "${filter.min?.minutesToFormattedTimeString() ?: 0.minutesToFormattedTimeString()} - ${filter.max?.minutesToFormattedTimeString() ?: "24:00"}"
+                            ) { viewModel.removeFilter(filter) }
 
-                                is Vehicle -> filter.values.forEach { vehicleType ->
-                                    AppliedFilterChip(
-                                        iconId = R.drawable.vehicle,
-                                        text = vehicleType.name.replaceFirstChar { it.uppercase() }) {
-                                        viewModel.removeFilter(
-                                            filter
-                                        )
-                                    }
+                            is Vehicle -> filter.values.forEach { vehicleType ->
+                                AppliedFilterChip(
+                                    iconId = R.drawable.vehicle,
+                                    text = vehicleType.name.replaceFirstChar { it.uppercase() }) {
+                                    viewModel.removeFilter(
+                                        filter
+                                    )
                                 }
+                            }
 
-                                is Place -> filter.values.forEach { placeType ->
-                                    AppliedFilterChip(
-                                        iconId = R.drawable.location,
-                                        text = placeType.name.replaceFirstChar { it.uppercase() }) {
-                                        viewModel.removeFilter(
-                                            filter
-                                        )
-                                    }
+                            is Place -> filter.values.forEach { placeType ->
+                                AppliedFilterChip(
+                                    iconId = R.drawable.location,
+                                    text = placeType.name.replaceFirstChar { it.uppercase() }) {
+                                    viewModel.removeFilter(
+                                        filter
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+        }
 
-            item { Spacer(Modifier.height(36.dp)) }
+        item { Spacer(Modifier.height(36.dp)) }
 
-            when {
-                state.isLoading -> item {
-                    Text(
-                        text = "Loading...",
-                        style = Heading4,
-                        color = Primary1
-                    )
+        when {
+            state.isLoading -> item {
+                Text(
+                    text = "Loading...",
+                    style = Heading4,
+                    color = Primary1
+                )
+            }
+
+            state.challenges.isEmpty() -> {
+                item {
+                    Text(text = "No challenges found.", style = Heading4, color = Primary1)
                 }
+            }
 
-                state.challenges.isEmpty() -> {
-                    item {
-                        Text(text = "No challenges found.", style = Heading4, color = Primary1)
+            else -> {
+                items(items = state.challenges) {
+                    ChallengeCard(it) {
+                        navController.navigate("challenge/${it.id}")
                     }
-                }
-
-                else -> {
-                    items(items = state.challenges) {
-                        ChallengeCard(it) {
-                            navController.navigate("challenge/${it.id}")
-                        }
-                        Spacer(Modifier.height(24.dp))
-                    }
+                    Spacer(Modifier.height(24.dp))
                 }
             }
         }
     }
+
 }

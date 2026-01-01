@@ -19,7 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,11 +42,12 @@ fun ChallengeCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .graphicsLayer {
-                shadowElevation = 16.dp.toPx()
-                shape = RoundedCornerShape(20.dp)
-                clip = false
-            }
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(20.dp),
+                clip = false,
+                spotColor = Color.Black.copy(alpha = 0.1f)
+            )
             .clip(shape = RoundedCornerShape(20.dp))
             .background(color = Base0)
             .padding(all = 16.dp)

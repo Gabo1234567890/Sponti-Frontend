@@ -15,7 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.ui.theme.Base0
 
@@ -31,11 +30,6 @@ fun DropdownFilterPopup(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .graphicsLayer {
-                shadowElevation = 16.dp.toPx()
-                shape = RoundedCornerShape(16.dp)
-                clip = false
-            }
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Base0)
             .padding(horizontal = 12.dp, vertical = 16.dp)
