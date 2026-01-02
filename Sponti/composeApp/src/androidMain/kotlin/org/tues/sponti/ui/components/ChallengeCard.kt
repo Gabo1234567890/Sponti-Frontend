@@ -2,6 +2,7 @@ package org.tues.sponti.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,7 +53,8 @@ fun ChallengeCard(
             .clip(shape = RoundedCornerShape(20.dp))
             .background(color = Base0)
             .padding(all = 16.dp)
-            .clickable(onClick = onClick)) {
+            .clickable(onClick = onClick)
+    ) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = challenge.title, style = Heading6, color = Primary1
@@ -60,19 +63,28 @@ fun ChallengeCard(
             Spacer(Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = challenge.thumbnailUrl,
+                    model = challenge.thumbnailUrl ?: R.drawable.image_placeholder,
                     contentDescription = "Thumbnail",
-                    modifier = Modifier.size(100.dp)
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.image_placeholder),
+                    error = painterResource(R.drawable.image_placeholder)
                 )
                 Spacer(Modifier.width(24.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 4.dp),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom
                 ) {
                     Text(
                         text = challenge.description,
@@ -85,7 +97,7 @@ fun ChallengeCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp),
-                        verticalAlignment = Alignment.Bottom
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.location),
