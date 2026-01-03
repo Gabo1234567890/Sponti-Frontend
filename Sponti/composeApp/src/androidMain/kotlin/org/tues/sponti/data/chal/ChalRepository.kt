@@ -2,6 +2,7 @@ package org.tues.sponti.data.chal
 
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.tues.sponti.data.network.ApiService
@@ -34,7 +35,7 @@ class ChalRepository(private val api: ApiService = RetrofitClient.api) {
     }
 
     suspend fun submitChallenge(
-        thumbnail: File,
+        thumbnail: File?,
         title: String,
         description: String,
         price: Int,
@@ -44,11 +45,11 @@ class ChalRepository(private val api: ApiService = RetrofitClient.api) {
         placeType: PlaceType
     ): Response<ChallengeDto> {
 
-        val imagePart = MultipartBody.Part.createFormData(
+        val imagePart = if (thumbnail != null) MultipartBody.Part.createFormData(
             name = "thumbnail",
             filename = thumbnail.name,
             body = thumbnail.asRequestBody("image/*".toMediaType())
-        )
+        ) else null
 
         return api.submitChallenge(
             thumbnail = imagePart,

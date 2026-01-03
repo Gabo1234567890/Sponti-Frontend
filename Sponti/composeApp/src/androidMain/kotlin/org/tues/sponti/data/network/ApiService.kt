@@ -100,7 +100,7 @@ interface ApiService {
     @Multipart
     @POST("/challenges/submit")
     suspend fun submitChallenge(
-        @Part thumbnail: MultipartBody.Part,
+        @Part thumbnail: MultipartBody.Part?,
         @Part("title") title: RequestBody,
         @Part("description") description: RequestBody,
         @Part("price") price: RequestBody,
