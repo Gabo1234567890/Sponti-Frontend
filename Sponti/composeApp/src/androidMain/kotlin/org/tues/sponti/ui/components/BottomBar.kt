@@ -4,16 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import org.tues.sponti.navigation.BottomBarItem
 import org.tues.sponti.ui.theme.Base0
 
@@ -24,18 +24,27 @@ fun BottomBar(currentRoute: String, onItemSelected: (BottomBarItem) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(64.dp)
             .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                clip = false
+                elevation = 30.dp,
+                clip = false,
+                spotColor = Color.Black,
             )
-            .background(color = Base0, shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+            .background(color = Color.Transparent)
+            .padding(top = 8.dp),
+        contentAlignment = Alignment.BottomCenter
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(color = Base0)
+        ) { }
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp, vertical = 4.dp),
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -45,6 +54,7 @@ fun BottomBar(currentRoute: String, onItemSelected: (BottomBarItem) -> Unit) {
                 BottomBarItemView(
                     item = item,
                     selected = selected,
+                    modifier = Modifier.zIndex(1f),
                     onClick = { onItemSelected(item) })
             }
         }

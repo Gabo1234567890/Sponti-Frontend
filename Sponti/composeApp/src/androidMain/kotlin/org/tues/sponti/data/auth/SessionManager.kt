@@ -1,6 +1,6 @@
 package org.tues.sponti.data.auth
 
-class SessionManager(private val authManager: AuthManager, private val authRepository: AuthRepository) {
+class SessionManager(private val authManager: AuthManager, private val authApi: AuthApi) {
     fun getAccessToken(): String? {
         return authManager.getAccessToken()
     }
@@ -8,7 +8,7 @@ class SessionManager(private val authManager: AuthManager, private val authRepos
     suspend fun refreshIfNeeded(): Boolean {
         val refreshToken = authManager.getRefreshToken() ?: return false
 
-        val response = authRepository.refreshTokens(refreshToken)
+        val response = authApi.refreshTokens(refreshToken)
 
         if(!response.isSuccessful) {
             authManager.clearTokens()

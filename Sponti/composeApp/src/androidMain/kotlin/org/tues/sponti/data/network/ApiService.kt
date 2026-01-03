@@ -1,6 +1,7 @@
 package org.tues.sponti.data.network
 
 import com.squareup.moshi.JsonClass
+import org.tues.sponti.data.chal.ChallengeDto
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
@@ -40,9 +41,17 @@ data class ResetPasswordResponse(val message: String?)
 
 data class VerifyEmailResponse(val message: String?)
 
-data class RefreshTokensRequest(val refreshToken: String?)
+data class RefreshTokensRequest(val refreshToken: String)
 
 data class RefreshTokensResponse(val accessToken: String?, val refreshToken: String?)
+
+@JsonClass(generateAdapter = true)
+data class FetchChallengesByFiltersResponse(
+    val items: List<ChallengeDto>?,
+    val count: Int?,
+    val page: Int?,
+    val perPage: Int?
+)
 
 interface ApiService {
     @POST("/auth/signup")
@@ -69,4 +78,16 @@ interface ApiService {
 
     @POST("/auth/refresh")
     suspend fun refreshTokens(@Body req: RefreshTokensRequest): Response<RefreshTokensResponse>
+
+    @GET("/challenges")
+    suspend fun fetchChallengesByFilters(
+        @Query("minPrice") minPrice: Int?,
+        @Query("maxPrice") maxPrice: Int?,
+        @Query("minDuration") minDuration: Int?,
+        @Query("maxDuration") maxDuration: Int?,
+        @Query("vehicles") vehicles: List<String>?,
+        @Query("placeTypes") placeTypes: List<String>?,
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int
+    ): Response<FetchChallengesByFiltersResponse>
 }

@@ -15,7 +15,7 @@ import org.tues.sponti.data.network.SignupResponse
 import org.tues.sponti.data.network.VerifyEmailResponse
 import retrofit2.Response
 
-class AuthRepository(private val api: ApiService = RetrofitClient.api) {
+class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi {
     suspend fun signup(
         username: String,
         email: String,
@@ -48,7 +48,7 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api) {
         return api.verifyEmail(token, email)
     }
 
-    suspend fun refreshTokens(refreshToken: String): Response<RefreshTokensResponse> {
+    override suspend fun refreshTokens(refreshToken: String): Response<RefreshTokensResponse> {
         val req = RefreshTokensRequest(refreshToken)
         return api.refreshTokens(req)
     }
