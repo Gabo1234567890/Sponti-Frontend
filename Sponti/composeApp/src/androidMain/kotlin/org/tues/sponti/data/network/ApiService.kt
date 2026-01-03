@@ -1,12 +1,18 @@
 package org.tues.sponti.data.network
 
 import com.squareup.moshi.JsonClass
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.tues.sponti.data.chal.ChallengeDto
+import org.tues.sponti.data.chal.PlaceType
+import org.tues.sponti.data.chal.VehicleType
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 @JsonClass(generateAdapter = true)
@@ -90,4 +96,17 @@ interface ApiService {
         @Query("page") page: Int,
         @Query("perPage") perPage: Int
     ): Response<FetchChallengesByFiltersResponse>
+
+    @Multipart
+    @POST("/challenges/submit")
+    suspend fun submitChallenge(
+        @Part thumbnail: MultipartBody.Part,
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("durationMinutes") durationMinutes: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("vehicle") vehicle: RequestBody,
+        @Part("placeType") placeType: RequestBody
+    ): Response<ChallengeDto>
 }
