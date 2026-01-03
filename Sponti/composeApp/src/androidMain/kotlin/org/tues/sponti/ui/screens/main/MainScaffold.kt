@@ -15,23 +15,27 @@ fun MainScaffold(navController: NavHostController, content: @Composable (Padding
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ""
 
-    Scaffold(topBar = {
-        PrimaryTopBar(
-            onSettings = { navController.navigate(Routes.SETTINGS) },
-            title = currentRoute.replaceFirstChar { it.uppercase() }
-        )
-    }, bottomBar = {
-        BottomBar(
-            currentRoute = currentRoute, onItemSelected = { item ->
-                navController.navigate(item.route) {
-                    launchSingleTop = true
-                    restoreState = true
-                    popUpTo(Routes.HOME) {
-                        saveState = true
+    Scaffold(
+        topBar = {
+            PrimaryTopBar(
+                onSettings = { navController.navigate(Routes.SETTINGS) },
+                title = currentRoute.replaceFirstChar { it.uppercase() }
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                currentRoute = currentRoute, onItemSelected = { item ->
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(Routes.HOME) {
+                            saveState = true
+                        }
                     }
                 }
-            })
-    }) { paddingValues ->
+            )
+        }
+    ) { paddingValues ->
         content(paddingValues)
     }
 }
