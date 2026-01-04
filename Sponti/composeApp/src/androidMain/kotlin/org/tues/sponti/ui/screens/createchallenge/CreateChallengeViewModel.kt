@@ -34,7 +34,7 @@ class CreateChallengeViewModel(
         _state.update { it.copy(thumbnail = value) }
     }
 
-    fun onPriceChange(value: Int) {
+    fun onPriceChange(value: String) {
         _state.update { it.copy(price = value) }
     }
 
@@ -63,7 +63,7 @@ class CreateChallengeViewModel(
                     thumbnail = _state.value.thumbnail,
                     title = _state.value.title,
                     description = _state.value.description,
-                    price = _state.value.price,
+                    price = _state.value.price.toInt(),
                     durationMinutes = _state.value.duration.formattedTimeToMinutes(),
                     place = _state.value.place,
                     vehicle = _state.value.vehicle,

@@ -36,7 +36,8 @@ fun IconInputField(
     placeholder: String,
     inputState: InputState,
     maxLength: Int,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val borderColor = when (inputState) {
         InputState.Default -> Base80
@@ -48,8 +49,7 @@ fun IconInputField(
     }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .border(BorderStroke(1.dp, borderColor), RoundedCornerShape(12.dp))
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -72,6 +72,7 @@ fun IconInputField(
                     }
                 },
                 textStyle = Caption1,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { onFocusChange.invoke(it.isFocused) },
@@ -81,8 +82,7 @@ fun IconInputField(
                     }
                     innerTextFiled()
                 },
-                cursorBrush = SolidColor(Base100),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                cursorBrush = SolidColor(Base100)
             )
         }
     }

@@ -56,7 +56,8 @@ fun TextFieldsFilterPopup(
                 onFocusChange = { focused ->
                     minInputState =
                         if (focused) InputState.Active else if (min.isEmpty()) InputState.Default else InputState.Filled
-                })
+                },
+                modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
             IconInputField(
                 iconId = iconId,
@@ -68,7 +69,8 @@ fun TextFieldsFilterPopup(
                 onFocusChange = { focused ->
                     maxInputState =
                         if (focused) InputState.Active else if (max.isEmpty()) InputState.Default else InputState.Filled
-                })
+                },
+                modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
             PrimaryButton(
                 text = "Search",

@@ -9,7 +9,7 @@ data class CreateChallengeState(
     val title: String = "",
     val description: String = "",
     val thumbnail: File? = null,
-    val price: Int = 0,
+    val price: String = "",
     val duration: String = "",
     val vehicle: VehicleType = VehicleType.CAR,
     val place: String = "",
