@@ -15,6 +15,10 @@ data class CreateChallengeState(
     val place: String = "",
     val placeType: PlaceType = PlaceType.ANYWHERE,
 
+    val titleError: FieldError? = null,
+    val priceError: FieldError? = null,
+    val durationError: FieldError? = null,
+    val placeError: FieldError? = null,
     val globalError: FieldError? = null,
 
     val isSubmitting: Boolean = false

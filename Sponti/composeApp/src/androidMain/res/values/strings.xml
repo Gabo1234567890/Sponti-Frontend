@@ -26,4 +26,15 @@
     <string name="forgotPassSuccessMessage">You have successfully set a new password!</string>
     <string name="forgotPassFailureTitle">Password Change Failed</string>
     <string name="forgotPassFailureMessage">An error occurred while trying to change your password!</string>
+
+    <string name="emptyTitle">Title is empty</string>
+    <string name="unknownTitleError">Unknown title error</string>
+    <string name="invalidPrice">Invalid price value</string>
+    <string name="emptyPrice">Price is empty</string>
+    <string name="unknownPriceError">Unknown price error</string>
+    <string name="invalidTime">Invalid time duration value or format</string>
+    <string name="emptyTime">Time is empty</string>
+    <string name="unknownTimeError">Unknown time duration error</string>
+    <string name="emptyPlace">Place is empty</string>
+    <string name="unknownPlaceError">Unknown place error</string>
 </resources>

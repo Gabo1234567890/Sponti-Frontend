@@ -51,6 +51,8 @@ import org.tues.sponti.ui.screens.common.uriToFile
 import org.tues.sponti.ui.theme.Base0
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Caption1
+import org.tues.sponti.ui.theme.Caption2
+import org.tues.sponti.ui.theme.Error
 import java.io.File
 
 @Composable
@@ -68,6 +70,30 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
     var priceState by remember { mutableStateOf(InputState.Default) }
     var durationState by remember { mutableStateOf(InputState.Default) }
     var placeState by remember { mutableStateOf(InputState.Default) }
+
+    LaunchedEffect(state.titleError) {
+        titleState =
+            if (state.titleError != null) InputState.Error else if (state.title.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
+    LaunchedEffect(state.priceError) {
+        priceState =
+            if (state.priceError != null) InputState.Error else if (state.price.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
+    LaunchedEffect(state.durationError) {
+        durationState =
+            if (state.durationError != null) InputState.Error else if (state.duration.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
+
+    LaunchedEffect(state.placeError) {
+        placeState =
+            if (state.placeError != null) InputState.Error else if (state.place.isEmpty()) InputState.Default
+            else InputState.Filled
+    }
 
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -97,6 +123,14 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
             if (file != null) viewModel.onThumbnailChange(file) else globalErrorText =
                 "Cannot open input stream from URI"
         }
+
+    val errorText = when {
+        state.titleError != null -> state.titleError!!.toUiText(FieldType.TITLE)
+        state.priceError != null -> state.priceError!!.toUiText(FieldType.PRICE)
+        state.durationError != null -> state.durationError!!.toUiText(FieldType.TIME)
+        state.placeError != null -> state.placeError!!.toUiText(FieldType.PLACE)
+        else -> ""
+    }
 
     Column(
         modifier = modifier
@@ -155,53 +189,63 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    IconInputField(
-                        iconId = R.drawable.price,
-                        value = state.price,
-                        onValueChange = { viewModel.onPriceChange(it) },
-                        placeholder = "0",
-                        inputState = priceState,
-                        maxLength = 3,
-                        onFocusChange = { focused ->
-                            priceState =
-                                if (focused) InputState.Active else if (state.price.isEmpty()) InputState.Default else InputState.Filled
-                        },
-                        modifier = Modifier.width(76.dp)
-                    )
-                    IconInputField(
-                        iconId = R.drawable.time,
-                        value = state.duration,
-                        onValueChange = { viewModel.onDurationChange(it) },
-                        placeholder = "00:00",
-                        inputState = durationState,
-                        maxLength = 5,
-                        onFocusChange = { focused ->
-                            durationState =
-                                if (focused) InputState.Active else if (state.duration.isEmpty()) InputState.Default else InputState.Filled
-                        },
-                        modifier = Modifier.width(76.dp)
-                    )
-                    DropdownInputField(
-                        iconId = R.drawable.vehicle,
-                        options = VehicleType.entries.map { vehicleType ->
-                            vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
-                        },
-                        selected = state.vehicle.name.lowercase()
-                            .replaceFirstChar { it.uppercase() },
-                        onSelectedChange = { selected ->
-                            viewModel.onVehicleChange(
-                                VehicleType.valueOf(
-                                    selected.uppercase()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        IconInputField(
+                            iconId = R.drawable.price,
+                            value = state.price,
+                            onValueChange = { viewModel.onPriceChange(it) },
+                            placeholder = "0",
+                            inputState = priceState,
+                            maxLength = 3,
+                            onFocusChange = { focused ->
+                                priceState =
+                                    if (focused) InputState.Active else if (state.price.isEmpty()) InputState.Default else InputState.Filled
+                            },
+                            modifier = Modifier.width(76.dp)
+                        )
+                        IconInputField(
+                            iconId = R.drawable.time,
+                            value = state.duration,
+                            onValueChange = { viewModel.onDurationChange(it) },
+                            placeholder = "00:00",
+                            inputState = durationState,
+                            maxLength = 5,
+                            onFocusChange = { focused ->
+                                durationState =
+                                    if (focused) InputState.Active else if (state.duration.isEmpty()) InputState.Default else InputState.Filled
+                            },
+                            modifier = Modifier.width(76.dp)
+                        )
+                        DropdownInputField(
+                            iconId = R.drawable.vehicle,
+                            options = VehicleType.entries.map { vehicleType ->
+                                vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
+                            },
+                            selected = state.vehicle.name.lowercase()
+                                .replaceFirstChar { it.uppercase() },
+                            onSelectedChange = { selected ->
+                                viewModel.onVehicleChange(
+                                    VehicleType.valueOf(
+                                        selected.uppercase()
+                                    )
                                 )
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                        )
+                    }
+                    Text(
+                        text = errorText,
+                        style = Caption2,
+                        color = Error
                     )
                 }
                 Row(
@@ -248,10 +292,13 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
             state =
                 if (
                     state.title.isEmpty()
-                    || state.description.isEmpty()
                     || state.price.isEmpty()
                     || state.duration.isEmpty()
                     || state.place.isEmpty()
+                    || state.titleError != null
+                    || state.priceError != null
+                    || state.durationError != null
+                    || state.placeError != null
                     || state.isSubmitting
                 ) ButtonState.Disabled else ButtonState.Active
         ) {

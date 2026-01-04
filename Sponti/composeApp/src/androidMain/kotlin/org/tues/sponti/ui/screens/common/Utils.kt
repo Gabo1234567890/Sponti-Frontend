@@ -21,13 +21,14 @@ fun Int.minutesToFormattedTimeString(): String {
     return "$formattedHours:$formattedMinutes"
 }
 
-fun String.formattedTimeToMinutes(): Int {
+fun String.formattedTimeToMinutes(): Int? {
     val time = this.split(':')
+    if (time.size != 2) return null
 
-    val hours = time[0].toInt() * 60
-    val minutes = time[1].toInt()
+    val hours = time[0].toIntOrNull() ?: return null
+    val minutes = time[1].toIntOrNull() ?: return null
 
-    return hours + minutes
+    return (hours * 60) + minutes
 }
 
 fun ChallengeDto.toUi(): ChallengeType {

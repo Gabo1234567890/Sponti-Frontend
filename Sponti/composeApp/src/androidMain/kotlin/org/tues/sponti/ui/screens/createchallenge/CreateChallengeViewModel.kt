@@ -23,7 +23,7 @@ class CreateChallengeViewModel(
     val state = _state.asStateFlow()
 
     fun onTitleChange(value: String) {
-        _state.update { it.copy(title = value) }
+        _state.update { it.copy(title = value, titleError = null) }
     }
 
     fun onDescriptionChange(value: String) {
@@ -35,11 +35,11 @@ class CreateChallengeViewModel(
     }
 
     fun onPriceChange(value: String) {
-        _state.update { it.copy(price = value) }
+        _state.update { it.copy(price = value, priceError = null) }
     }
 
     fun onDurationChange(value: String) {
-        _state.update { it.copy(duration = value) }
+        _state.update { it.copy(duration = value, durationError = null) }
     }
 
     fun onVehicleChange(value: VehicleType) {
@@ -47,7 +47,7 @@ class CreateChallengeViewModel(
     }
 
     fun onPlaceChange(value: String) {
-        _state.update { it.copy(place = value) }
+        _state.update { it.copy(place = value, placeError = null) }
     }
 
     fun onPlaceTypeChange(value: PlaceType) {
@@ -55,17 +55,53 @@ class CreateChallengeViewModel(
     }
 
     fun submit(onSuccess: () -> Unit) {
+        val price = _state.value.price.trim().toIntOrNull()
+        val durationMinutes = _state.value.duration.trim().toIntOrNull() ?: _state.value.duration.trim()
+            .formattedTimeToMinutes()
+
+        when {
+            _state.value.title.isBlank() -> {
+                _state.update { it.copy(titleError = FieldError.Empty) }
+                return
+            }
+
+            _state.value.price.isBlank() -> {
+                _state.update { it.copy(priceError = FieldError.Empty) }
+                return
+            }
+
+            (price == null || price < 0) -> {
+                _state.update { it.copy(priceError = FieldError.InvalidFormat) }
+                return
+            }
+
+            _state.value.duration.isBlank() -> {
+                _state.update { it.copy(durationError = FieldError.Empty) }
+                return
+            }
+
+            (durationMinutes == null || durationMinutes < 0) -> {
+                _state.update { it.copy(durationError = FieldError.InvalidFormat) }
+                return
+            }
+
+            _state.value.place.isBlank() -> {
+                _state.update { it.copy(placeError = FieldError.Empty) }
+                return
+            }
+        }
+
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true) }
 
             try {
                 val resp = chalRepository.submitChallenge(
                     thumbnail = _state.value.thumbnail,
-                    title = _state.value.title,
-                    description = _state.value.description,
-                    price = _state.value.price.toInt(),
-                    durationMinutes = _state.value.duration.formattedTimeToMinutes(),
-                    place = _state.value.place,
+                    title = _state.value.title.trim(),
+                    description = _state.value.description.trim(),
+                    price = price,
+                    durationMinutes = durationMinutes,
+                    place = _state.value.place.trim(),
                     vehicle = _state.value.vehicle,
                     placeType = _state.value.placeType,
                 )
@@ -78,6 +114,7 @@ class CreateChallengeViewModel(
                     val parsed = errorJson?.let { adapter.fromJson(it) }
                     _state.update { it.copy(globalError = parsed?.toFieldError()) }
                 }
+
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }
             } finally {
