@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.tues.sponti.ui.screens.common.formattedTimeToMinutes
 import org.tues.sponti.ui.theme.Base0
 
 @Composable
@@ -32,8 +33,8 @@ fun TextFieldsFilterPopup(
     var minInputState by remember { mutableStateOf(InputState.Default) }
     var maxInputState by remember { mutableStateOf(InputState.Default) }
 
-    val minVal = min.toIntOrNull()
-    val maxVal = max.toIntOrNull()
+    val minVal = (min.toIntOrNull() ?: min.formattedTimeToMinutes())
+    val maxVal = (max.toIntOrNull() ?: max.formattedTimeToMinutes())
 
     val valid =
         (minVal != null || maxVal != null) && (minVal == null || maxVal == null || minVal <= maxVal)

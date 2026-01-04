@@ -7,11 +7,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.tues.sponti.data.chal.ChalRepository
+import org.tues.sponti.data.chal.PlaceType
+import org.tues.sponti.data.chal.VehicleType
 import org.tues.sponti.data.network.ErrorResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.ui.screens.common.FieldError
 import org.tues.sponti.ui.screens.common.FilterType
 import org.tues.sponti.ui.screens.common.toUi
+import kotlin.collections.orEmpty
 
 class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository()) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
@@ -69,28 +72,40 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
 
                 is HomeFilter.Duration -> state.appliedFilters.filterNot { it is HomeFilter.Duration }
 
-                is HomeFilter.Vehicle -> {
-                    val existing = state.appliedFilters.filterIsInstance<HomeFilter.Vehicle>()
-                        .firstOrNull()?.values?.minus(filter.values).orEmpty()
-
-                    state.appliedFilters.filterNot { it is HomeFilter.Vehicle } +
-                            if (existing.isNotEmpty()) HomeFilter.Vehicle(existing)
-                            else HomeFilter.Vehicle(emptySet())
-                }
-
-                is HomeFilter.Place -> {
-                    val existing = state.appliedFilters.filterIsInstance<HomeFilter.Place>()
-                        .firstOrNull()?.values?.minus(filter.values).orEmpty()
-
-                    state.appliedFilters.filterNot { it is HomeFilter.Place } +
-                        if (existing.isNotEmpty()) HomeFilter.Place(existing)
-                        else HomeFilter.Place(emptySet())
-                }
+                else -> state.appliedFilters
             }
 
             state.copy(
                 appliedFilters = updatedFilters, activePopUp = null
             )
+        }
+        fetchChallenges()
+    }
+
+    fun removeVehicleFilter(vehicle: VehicleType) {
+        _state.update { state ->
+            val current = state.appliedFilters.filterIsInstance<HomeFilter.Vehicle>().firstOrNull()
+
+            val updatedValues = current?.values?.minus(vehicle).orEmpty()
+
+            val updatedFilters = state.appliedFilters.filterNot { it is HomeFilter.Vehicle } +
+                    HomeFilter.Vehicle(updatedValues)
+
+            state.copy(appliedFilters = updatedFilters)
+        }
+        fetchChallenges()
+    }
+
+    fun removePlaceTypeFilter(placeType: PlaceType) {
+        _state.update { state ->
+            val current = state.appliedFilters.filterIsInstance<HomeFilter.Place>().firstOrNull()
+
+            val updatedValues = current?.values?.minus(placeType).orEmpty()
+
+            val updatedFilters = state.appliedFilters.filterNot { it is HomeFilter.Place } +
+                    HomeFilter.Place(updatedValues)
+
+            state.copy(appliedFilters = updatedFilters)
         }
         fetchChallenges()
     }

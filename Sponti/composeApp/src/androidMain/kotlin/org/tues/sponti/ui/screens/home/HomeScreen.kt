@@ -108,7 +108,12 @@ fun HomeScreen(
         if (state.appliedFilters.isNotEmpty()) {
             item {
                 Spacer(Modifier.height(20.dp))
-                FlowRow(maxItemsInEachRow = 3, modifier = Modifier.fillMaxWidth()) {
+                FlowRow(
+                    maxItemsInEachRow = 3,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     state.appliedFilters.forEach { filter ->
                         when (filter) {
                             is Price -> AppliedFilterChip(
@@ -124,21 +129,17 @@ fun HomeScreen(
                             is Vehicle -> filter.values.forEach { vehicleType ->
                                 AppliedFilterChip(
                                     iconId = R.drawable.vehicle,
-                                    text = vehicleType.name.replaceFirstChar { it.uppercase() }) {
-                                    viewModel.removeFilter(
-                                        filter
-                                    )
-                                }
+                                    text = vehicleType.name.lowercase()
+                                        .replaceFirstChar { it.uppercase() }
+                                ) { viewModel.removeVehicleFilter(vehicleType) }
                             }
 
                             is Place -> filter.values.forEach { placeType ->
                                 AppliedFilterChip(
                                     iconId = R.drawable.location,
-                                    text = placeType.name.replaceFirstChar { it.uppercase() }) {
-                                    viewModel.removeFilter(
-                                        filter
-                                    )
-                                }
+                                    text = placeType.name.lowercase()
+                                        .replaceFirstChar { it.uppercase() }
+                                ) { viewModel.removePlaceTypeFilter(placeType) }
                             }
                         }
                     }

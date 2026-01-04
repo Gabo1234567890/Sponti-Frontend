@@ -29,7 +29,6 @@ fun AppliedFilterChip(
     iconId: Int, text: String, onRemove: () -> Unit
 ) {
     Box(modifier = Modifier
-        .padding(all = 8.dp)
         .shadow(
             elevation = 16.dp,
             shape = RoundedCornerShape(16.dp),
@@ -37,7 +36,8 @@ fun AppliedFilterChip(
             spotColor = Color.Black.copy(alpha = 0.1f)
         )
         .clip(shape = RoundedCornerShape(16.dp))
-        .background(color = Primary1))
+        .background(color = Primary1)
+        .padding(all = 8.dp))
     {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
