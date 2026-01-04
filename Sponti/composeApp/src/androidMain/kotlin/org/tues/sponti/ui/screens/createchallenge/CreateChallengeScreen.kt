@@ -239,7 +239,6 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
                         )
                     }
                     Text(
@@ -321,7 +320,8 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                         file
                     )
                     cameraLauncher.launch(uri)
-                }
+                },
+                onDismiss = { showPicker = false }
             )
         }
     }

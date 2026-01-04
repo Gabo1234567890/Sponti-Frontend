@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -49,6 +50,8 @@ fun DropdownInputField(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var anchorSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val focusManager = LocalFocusManager.current
 
     Column {
         Box(
@@ -93,7 +96,10 @@ fun DropdownInputField(
         if (expanded) {
             Popup(
                 alignment = Alignment.TopStart,
-                onDismissRequest = { expanded = false },
+                onDismissRequest = {
+                    expanded = false
+                    focusManager.clearFocus(force = true)
+                },
                 properties = PopupProperties(focusable = true, dismissOnClickOutside = true),
                 offset = IntOffset(0, anchorSize.height + 8)
             ) {
@@ -117,6 +123,7 @@ fun DropdownInputField(
                                 .clickable {
                                     onSelectedChange(option)
                                     expanded = false
+                                    focusManager.clearFocus(force = true)
                                 }
                                 .padding(horizontal = 8.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically
