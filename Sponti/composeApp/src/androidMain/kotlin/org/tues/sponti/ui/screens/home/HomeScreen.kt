@@ -29,6 +29,7 @@ import org.tues.sponti.R
 import org.tues.sponti.ui.components.AppliedFilterChip
 import org.tues.sponti.ui.components.ChallengeCard
 import org.tues.sponti.ui.components.FilterButton
+import org.tues.sponti.ui.components.LinkButton
 import org.tues.sponti.ui.screens.common.FieldType
 import org.tues.sponti.ui.screens.common.FilterType
 import org.tues.sponti.ui.screens.common.minutesToFormattedTimeString
@@ -116,15 +117,29 @@ fun HomeScreen(
                 ) {
                     state.appliedFilters.forEach { filter ->
                         when (filter) {
-                            is Price -> AppliedFilterChip(
-                                iconId = R.drawable.price,
-                                text = "${filter.min ?: 0} - ${filter.max ?: 999}"
-                            ) { viewModel.removeFilter(filter) }
+                            is Price -> {
+                                val min = filter.min ?: 0
+                                val max = filter.max ?: 999
 
-                            is Duration -> AppliedFilterChip(
-                                iconId = R.drawable.time,
-                                text = "${filter.min?.minutesToFormattedTimeString() ?: 0.minutesToFormattedTimeString()} - ${filter.max?.minutesToFormattedTimeString() ?: "24:00"}"
-                            ) { viewModel.removeFilter(filter) }
+                                val text = if (min == max) "$min" else "$min - $max"
+                                AppliedFilterChip(
+                                    iconId = R.drawable.price,
+                                    text = text
+                                ) { viewModel.removeFilter(filter) }
+                            }
+
+                            is Duration -> {
+                                val min = filter.min ?: 0
+                                val max = filter.max ?: (24 * 60)
+
+                                val text =
+                                    if (min == max) min.minutesToFormattedTimeString()
+                                    else "${min.minutesToFormattedTimeString()} - ${max.minutesToFormattedTimeString()}"
+                                AppliedFilterChip(
+                                    iconId = R.drawable.time,
+                                    text = text
+                                ) { viewModel.removeFilter(filter) }
+                            }
 
                             is Vehicle -> filter.values.forEach { vehicleType ->
                                 AppliedFilterChip(
@@ -144,6 +159,11 @@ fun HomeScreen(
                         }
                     }
                 }
+                Spacer(Modifier.height(12.dp))
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start
+                ) { LinkButton(text = "Clear all") { viewModel.clearAllFilters() } }
             }
         }
 
