@@ -162,8 +162,8 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                 InputField(
                     value = state.description,
                     onValueChange = { viewModel.onDescriptionChange(it) },
-                    label = "Description",
-                    placeholder = "Description",
+                    label = "Description (optional)",
+                    placeholder = "Description (optional)",
                     inputState = descriptionState,
                     onFocusChange = { focused ->
                         descriptionState =
@@ -180,7 +180,7 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                 ImagePickerBox(
                     imageFile = state.thumbnail, onClick = { showPicker = true })
                 Text(
-                    text = "Add an image that will serve as the thumbnail of the challenge.",
+                    text = "Add an image that will serve as the thumbnail of the challenge. (optional)\n\nNote: You cannot add later.",
                     style = Caption1,
                     color = Base100
                 )
