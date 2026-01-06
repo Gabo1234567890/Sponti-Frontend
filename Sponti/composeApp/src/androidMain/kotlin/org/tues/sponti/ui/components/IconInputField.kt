@@ -11,21 +11,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Base80
 import org.tues.sponti.ui.theme.Caption1
+import org.tues.sponti.ui.theme.Error
 import org.tues.sponti.ui.theme.Primary1
 
 @Composable
@@ -36,20 +34,18 @@ fun IconInputField(
     placeholder: String,
     inputState: InputState,
     maxLength: Int,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val borderColor = when (inputState) {
         InputState.Default -> Base80
         InputState.Active -> Primary1
         InputState.Filled -> Base100
-        else -> {
-            Color.Unspecified
-        }
+        InputState.Error -> Error
     }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .border(BorderStroke(1.dp, borderColor), RoundedCornerShape(12.dp))
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -72,6 +68,7 @@ fun IconInputField(
                     }
                 },
                 textStyle = Caption1,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { onFocusChange.invoke(it.isFocused) },
@@ -81,8 +78,7 @@ fun IconInputField(
                     }
                     innerTextFiled()
                 },
-                cursorBrush = SolidColor(Base100),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                cursorBrush = SolidColor(Base100)
             )
         }
     }

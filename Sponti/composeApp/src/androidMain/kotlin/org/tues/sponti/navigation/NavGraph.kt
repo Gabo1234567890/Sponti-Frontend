@@ -10,9 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
+import org.tues.sponti.ui.screens.createchallenge.CreateChallengeScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
 import org.tues.sponti.ui.screens.home.HomeRoute
-import org.tues.sponti.ui.screens.home.HomeScreen
 import org.tues.sponti.ui.screens.login.LogInScreen
 import org.tues.sponti.ui.screens.verifyemail.VerifyEmailScreens
 
@@ -87,6 +87,15 @@ fun AppNavGraph(
 
         composable(route = Routes.HOME) {
             HomeRoute(navController)
+        }
+
+        composable(route = Routes.ADD) {
+            ProtectedScaffold(navController = navController) { paddingValues ->
+                CreateChallengeScreen(
+                    navController = navController,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }

@@ -7,18 +7,51 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.tues.sponti.data.chal.ChalRepository
+import org.tues.sponti.data.chal.PlaceType
+import org.tues.sponti.data.chal.VehicleType
 import org.tues.sponti.data.network.ErrorResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.ui.screens.common.FieldError
 import org.tues.sponti.ui.screens.common.FilterType
 import org.tues.sponti.ui.screens.common.toUi
+import kotlin.collections.orEmpty
+
+private const val PLACE_SIGNATURE_ALL = "ALL"
 
 class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository()) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
+    private var lastQuerySignature: String? = null
+
     init {
         fetchChallenges()
+    }
+
+    private fun effectivePlaceTypes(selected: Set<PlaceType>): List<PlaceType>? {
+        return when (selected) {
+            setOf(PlaceType.INDOOR) -> listOf(PlaceType.INDOOR)
+            setOf(PlaceType.OUTDOOR) -> listOf(PlaceType.OUTDOOR)
+            else -> null
+        }
+    }
+
+    private fun buildQuerySignature(): String {
+        val placeSignature = effectivePlaceTypes(
+            _state.value.appliedFilters.filterIsInstance<HomeFilter.Place>()
+                .firstOrNull()?.values.orEmpty()
+        )?.sorted()?.joinToString() ?: PLACE_SIGNATURE_ALL
+
+        return listOf(
+            _state.value.appliedFilters.filterIsInstance<HomeFilter.Price>().firstOrNull()
+                ?.toString(),
+            _state.value.appliedFilters.filterIsInstance<HomeFilter.Duration>().firstOrNull()
+                ?.toString(),
+            _state.value.appliedFilters.filterIsInstance<HomeFilter.Vehicle>()
+                .firstOrNull()?.values?.sorted()
+                ?.joinToString(),
+            placeSignature
+        ).joinToString("|")
     }
 
     fun openFilter(type: FilterType) {
@@ -69,23 +102,7 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
 
                 is HomeFilter.Duration -> state.appliedFilters.filterNot { it is HomeFilter.Duration }
 
-                is HomeFilter.Vehicle -> {
-                    val existing = state.appliedFilters.filterIsInstance<HomeFilter.Vehicle>()
-                        .firstOrNull()?.values?.minus(filter.values).orEmpty()
-
-                    state.appliedFilters.filterNot { it is HomeFilter.Vehicle } +
-                            if (existing.isNotEmpty()) HomeFilter.Vehicle(existing)
-                            else HomeFilter.Vehicle(emptySet())
-                }
-
-                is HomeFilter.Place -> {
-                    val existing = state.appliedFilters.filterIsInstance<HomeFilter.Place>()
-                        .firstOrNull()?.values?.minus(filter.values).orEmpty()
-
-                    state.appliedFilters.filterNot { it is HomeFilter.Place } +
-                        if (existing.isNotEmpty()) HomeFilter.Place(existing)
-                        else HomeFilter.Place(emptySet())
-                }
+                else -> state.appliedFilters
             }
 
             state.copy(
@@ -95,7 +112,46 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
         fetchChallenges()
     }
 
+    fun removeVehicleFilter(vehicle: VehicleType) {
+        _state.update { state ->
+            val current = state.appliedFilters.filterIsInstance<HomeFilter.Vehicle>().firstOrNull()
+
+            val updatedValues = current?.values?.minus(vehicle).orEmpty()
+
+            val updatedFilters = state.appliedFilters.filterNot { it is HomeFilter.Vehicle } +
+                    (if (updatedValues.isNotEmpty()) HomeFilter.Vehicle(updatedValues) else null)
+
+            state.copy(appliedFilters = updatedFilters.filterNotNull())
+        }
+        fetchChallenges()
+    }
+
+    fun removePlaceTypeFilter(placeType: PlaceType) {
+        _state.update { state ->
+            val current = state.appliedFilters.filterIsInstance<HomeFilter.Place>().firstOrNull()
+
+            val updatedValues = current?.values?.minus(placeType).orEmpty()
+
+            val updatedFilters = state.appliedFilters.filterNot { it is HomeFilter.Place } +
+                    (if (updatedValues.isNotEmpty()) HomeFilter.Place(updatedValues) else null)
+
+            state.copy(appliedFilters = updatedFilters.filterNotNull())
+        }
+        fetchChallenges()
+    }
+
+    fun clearAllFilters() {
+        _state.update {
+            it.copy(appliedFilters = emptyList())
+        }
+        fetchChallenges()
+    }
+
     fun fetchChallenges() {
+        val signature = buildQuerySignature()
+        if (signature == lastQuerySignature) return
+        else lastQuerySignature = signature
+
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
@@ -110,13 +166,15 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
                 val placeTypeFilter =
                     _state.value.appliedFilters.filterIsInstance<HomeFilter.Place>().firstOrNull()
 
+                val effectivePlaceTypes = effectivePlaceTypes(placeTypeFilter?.values.orEmpty())
+
                 val resp = chalRepository.fetchChallengesByFilters(
                     minPrice = priceFilter?.min,
                     maxPrice = priceFilter?.max,
                     minDuration = durationFilter?.min,
                     maxDuration = durationFilter?.max,
                     vehicles = vehicleFilter?.values?.toList(),
-                    placeTypes = placeTypeFilter?.values?.toList()
+                    placeTypes = effectivePlaceTypes
                 )
 
                 if (resp.isSuccessful) {

@@ -5,5 +5,9 @@ enum class FieldType {
     EMAIL,
     PASSWORD,
     LOGIN,
+    TITLE,
+    PRICE,
+    TIME,
+    PLACE,
     GLOBAL
 }

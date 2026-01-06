@@ -1,10 +1,15 @@
 package org.tues.sponti.data.chal
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.FetchChallengesByFiltersResponse
 import org.tues.sponti.data.network.RetrofitClient
-import org.tues.sponti.ui.screens.common.ChallengeType
 import retrofit2.Response
+import java.io.File
 
 class ChalRepository(private val api: ApiService = RetrofitClient.api) {
     suspend fun fetchChallengesByFilters(
@@ -26,6 +31,35 @@ class ChalRepository(private val api: ApiService = RetrofitClient.api) {
             placeTypes = placeTypes?.map { it.name.lowercase() },
             page = page,
             perPage = perPage
+        )
+    }
+
+    suspend fun submitChallenge(
+        thumbnail: File?,
+        title: String,
+        description: String,
+        price: Int,
+        durationMinutes: Int,
+        place: String,
+        vehicle: VehicleType,
+        placeType: PlaceType
+    ): Response<ChallengeDto> {
+
+        val imagePart = if (thumbnail != null) MultipartBody.Part.createFormData(
+            name = "thumbnail",
+            filename = thumbnail.name,
+            body = thumbnail.asRequestBody("image/*".toMediaType())
+        ) else null
+
+        return api.submitChallenge(
+            thumbnail = imagePart,
+            title = title.toRequestBody(),
+            description = description.toRequestBody(),
+            price = price.toString().toRequestBody(),
+            durationMinutes = durationMinutes.toString().toRequestBody(),
+            place = place.toRequestBody(),
+            vehicle = vehicle.name.lowercase().toRequestBody(),
+            placeType = placeType.name.lowercase().toRequestBody()
         )
     }
 }

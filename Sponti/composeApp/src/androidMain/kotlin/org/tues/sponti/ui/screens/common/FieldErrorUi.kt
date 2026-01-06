@@ -8,12 +8,18 @@ import org.tues.sponti.R
 fun FieldError.toUiText(field: FieldType): String = when (this) {
     FieldError.Empty -> when (field) {
         FieldType.USERNAME -> stringResource(R.string.emptyUsername)
+        FieldType.TITLE -> stringResource(R.string.emptyTitle)
+        FieldType.PRICE -> stringResource(R.string.emptyPrice)
+        FieldType.TIME -> stringResource(R.string.emptyTime)
+        FieldType.PLACE -> stringResource(R.string.emptyPlace)
         else -> stringResource(R.string.unknownError)
     }
 
     FieldError.InvalidFormat -> when (field) {
         FieldType.EMAIL -> stringResource(R.string.invalidEmail)
         FieldType.LOGIN -> stringResource(R.string.invalidLoginResponse)
+        FieldType.PRICE -> stringResource(R.string.invalidPrice)
+        FieldType.TIME -> stringResource(R.string.invalidTime)
         else -> stringResource(R.string.unknownError)
     }
 
@@ -37,10 +43,13 @@ fun FieldError.toUiText(field: FieldType): String = when (this) {
         FieldType.EMAIL -> stringResource(R.string.unknownEmailError)
         FieldType.PASSWORD -> stringResource(R.string.unknownPasswordError)
         FieldType.LOGIN -> stringResource(R.string.unknownLoginError)
+        FieldType.TITLE -> stringResource(R.string.unknownTitleError)
+        FieldType.PRICE -> stringResource(R.string.unknownPriceError)
+        FieldType.TIME -> stringResource(R.string.unknownTimeError)
+        FieldType.PLACE -> stringResource(R.string.unknownPlaceError)
         FieldType.GLOBAL -> stringResource(R.string.unknownError)
     }
 
     FieldError.Network -> stringResource(R.string.networkError)
-
     is FieldError.Server -> message
 }

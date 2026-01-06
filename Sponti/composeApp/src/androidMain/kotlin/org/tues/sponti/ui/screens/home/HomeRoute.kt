@@ -69,9 +69,9 @@ fun HomeRoute(navController: NavHostController) {
 
                             FilterType.DURATION -> TextFieldsFilterPopup(
                                 iconId = R.drawable.time,
-                                minLabel = "Min time duration",
-                                maxLabel = "Max time duration",
-                                maxDigits = 3
+                                minLabel = "Min duration (minutes or HH:MM)",
+                                maxLabel = "Max duration (minutes or HH:MM)",
+                                maxDigits = 5
                             ) { min: Int?, max: Int? ->
                                 viewModel.applyFilter(
                                     Duration(

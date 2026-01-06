@@ -36,7 +36,7 @@ import org.tues.sponti.ui.theme.Caption1
 import org.tues.sponti.ui.theme.Success
 
 @Composable
-fun IconDropdownInputField(
+fun IconDropdownFilterInputField(
     iconId: Int,
     label: String,
     options: List<String>,
