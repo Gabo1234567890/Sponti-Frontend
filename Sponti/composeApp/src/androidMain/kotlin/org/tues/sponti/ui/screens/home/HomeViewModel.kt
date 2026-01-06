@@ -16,6 +16,8 @@ import org.tues.sponti.ui.screens.common.FilterType
 import org.tues.sponti.ui.screens.common.toUi
 import kotlin.collections.orEmpty
 
+private const val PLACE_SIGNATURE_ALL = "ALL"
+
 class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository()) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -38,7 +40,7 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
         val placeSignature = effectivePlaceTypes(
             _state.value.appliedFilters.filterIsInstance<HomeFilter.Place>()
                 .firstOrNull()?.values.orEmpty()
-        )?.sorted()?.joinToString() ?: "ALL"
+        )?.sorted()?.joinToString() ?: PLACE_SIGNATURE_ALL
 
         return listOf(
             _state.value.appliedFilters.filterIsInstance<HomeFilter.Price>().firstOrNull()

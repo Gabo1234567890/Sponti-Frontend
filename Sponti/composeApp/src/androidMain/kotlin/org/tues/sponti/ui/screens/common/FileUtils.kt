@@ -5,13 +5,13 @@ import android.net.Uri
 import java.io.File
 import java.io.FileOutputStream
 
-fun createTempImageFile(context: Context): File {
-    val dir = File(context.cacheDir, "images").apply { mkdirs() }
+fun Context.createTempImageFile(): File {
+    val dir = File(cacheDir, "images").apply { mkdirs() }
     return File.createTempFile("challenge_thumbnail_", ".jpg", dir)
 }
 
-fun uriToFile(context: Context, uri: Uri): File? {
-    val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+fun Uri.toTempFile(context: Context): File? {
+    val inputStream = context.contentResolver.openInputStream(this) ?: return null
 
     val dir = File(context.cacheDir, "images").apply { mkdirs() }
     val tempFile = File.createTempFile("challenge_thumbnail_", ".jpg", dir)

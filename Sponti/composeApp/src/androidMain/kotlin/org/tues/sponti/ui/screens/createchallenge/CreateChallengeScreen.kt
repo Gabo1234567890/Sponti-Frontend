@@ -46,8 +46,8 @@ import org.tues.sponti.ui.components.PickerDialog
 import org.tues.sponti.ui.components.PrimaryButton
 import org.tues.sponti.ui.screens.common.FieldType
 import org.tues.sponti.ui.screens.common.createTempImageFile
+import org.tues.sponti.ui.screens.common.toTempFile
 import org.tues.sponti.ui.screens.common.toUiText
-import org.tues.sponti.ui.screens.common.uriToFile
 import org.tues.sponti.ui.theme.Base0
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Caption1
@@ -118,7 +118,7 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
             uri ?: return@rememberLauncherForActivityResult
 
-            val file = uriToFile(context, uri)
+            val file = uri.toTempFile(context)
 
             if (file != null) viewModel.onThumbnailChange(file) else globalErrorText =
                 "Cannot open input stream from URI"
@@ -312,7 +312,7 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                 },
                 onCamera = {
                     showPicker = false
-                    val file = createTempImageFile(context)
+                    val file = context.createTempImageFile()
                     tempCameraFile = file
                     val uri = FileProvider.getUriForFile(
                         context,
