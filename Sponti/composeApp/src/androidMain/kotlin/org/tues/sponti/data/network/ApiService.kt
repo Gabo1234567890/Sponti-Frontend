@@ -4,8 +4,7 @@ import com.squareup.moshi.JsonClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.tues.sponti.data.chal.ChallengeDto
-import org.tues.sponti.data.part.CompletionImageDto
-import org.tues.sponti.data.part.ParticipationDto
+import org.tues.sponti.data.user.MemoryItemDto
 import org.tues.sponti.data.user.UserDto
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
@@ -62,7 +61,7 @@ data class FetchChallengesByFiltersResponse(
 
 @JsonClass(generateAdapter = true)
 data class GetMemoriesResponse(
-    val items: List<CompletionImageDto>?,
+    val items: List<MemoryItemDto>?,
     val page: Int?,
     val perPage: Int?
 )
@@ -128,7 +127,7 @@ interface ApiService {
     ): Response<GetMemoriesResponse>
 
     @GET("/participations/active")
-    suspend fun getActiveParticipations(): Response<List<ParticipationDto>>
+    suspend fun getActiveParticipations(): Response<List<ChallengeDto>>
 
     @GET("participations/completed-count")
     suspend fun getAllCompletedCount(): Response<Int>
