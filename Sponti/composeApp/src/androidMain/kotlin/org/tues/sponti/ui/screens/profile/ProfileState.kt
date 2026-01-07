@@ -5,7 +5,7 @@ import org.tues.sponti.data.user.MemoryItemDto
 import org.tues.sponti.data.user.UserDto
 import org.tues.sponti.ui.screens.common.FieldError
 
-data class ProfileScreenState(
+data class ProfileState(
     val userData: UserDto? = null,
     val activeChallenge: List<ChallengeDto> = emptyList(),
     val completedCount: Int = 0,
