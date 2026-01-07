@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +32,8 @@ import org.tues.sponti.ui.screens.home.HomeFilter.Vehicle
 fun HomeRoute(navController: NavHostController) {
     val viewModel: HomeViewModel = viewModel()
     val state by viewModel.state.collectAsState()
+
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -56,7 +59,7 @@ fun HomeRoute(navController: NavHostController) {
                     .zIndex(2f)
             ) {
                 Box(
-                    modifier = Modifier.pointerInput(Unit) { detectTapGestures { } }
+                    modifier = Modifier.pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } }
                 ) {
                     state.activePopUp?.let { active ->
                         when (active) {

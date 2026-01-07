@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.ui.screens.common.formattedTimeToMinutes
+import org.tues.sponti.ui.screens.common.minutesToFormattedTimeString
 import org.tues.sponti.ui.theme.Base0
 
 @Composable
@@ -33,11 +34,18 @@ fun TextFieldsFilterPopup(
     var minInputState by remember { mutableStateOf(InputState.Default) }
     var maxInputState by remember { mutableStateOf(InputState.Default) }
 
-    val minVal = (min.toIntOrNull() ?: min.formattedTimeToMinutes())
-    val maxVal = (max.toIntOrNull() ?: max.formattedTimeToMinutes())
+    val duration = minLabel.contains("duration")
+
+    val minVal = (min.toIntOrNull() ?: if (duration) min.formattedTimeToMinutes() else null)
+    val maxVal = (max.toIntOrNull() ?: if (duration) max.formattedTimeToMinutes() else null)
 
     val valid =
         (minVal != null || maxVal != null) && (minVal == null || maxVal == null || minVal <= maxVal)
+
+    val durationOutOfBounds =
+        duration && listOf(minVal, maxVal).any { it != null && (it < 0 || it > (24 * 60)) }
+
+    val allowedChars = if (duration) "[^0-9:]" else "[^0-9]"
 
     Box(
         modifier = Modifier
@@ -50,33 +58,53 @@ fun TextFieldsFilterPopup(
             IconInputField(
                 iconId = iconId,
                 value = min,
-                onValueChange = { min = it },
+                onValueChange = {
+                    if (!Regex(allowedChars).containsMatchIn(it)) {
+                        min = it
+                    }
+                },
                 placeholder = minLabel,
                 inputState = minInputState,
                 maxLength = maxDigits,
                 onFocusChange = { focused ->
                     minInputState =
                         if (focused) InputState.Active else if (min.isEmpty()) InputState.Default else InputState.Filled
+                    if (duration && minInputState == InputState.Filled) min =
+                        if (min.toIntOrNull() == null) min else min.toInt()
+                            .minutesToFormattedTimeString()
                 },
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(Modifier.height(8.dp))
             IconInputField(
                 iconId = iconId,
                 value = max,
-                onValueChange = { max = it },
+                onValueChange = {
+                    if (!Regex(allowedChars).containsMatchIn(it)) {
+                        max = it
+                    }
+                },
                 placeholder = maxLabel,
                 inputState = maxInputState,
                 maxLength = maxDigits,
                 onFocusChange = { focused ->
                     maxInputState =
                         if (focused) InputState.Active else if (max.isEmpty()) InputState.Default else InputState.Filled
+                    if (duration && maxInputState == InputState.Filled) max =
+                        if (max.toIntOrNull() == null) max else max.toInt()
+                            .minutesToFormattedTimeString()
                 },
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(Modifier.height(8.dp))
             PrimaryButton(
                 text = "Search",
                 size = ButtonSize.Small,
-                state = if (valid) ButtonState.Active else ButtonState.Disabled,
+                state =
+                    if (valid)
+                        if (durationOutOfBounds) ButtonState.Disabled
+                        else ButtonState.Active
+                    else ButtonState.Disabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 onApply(minVal, maxVal)

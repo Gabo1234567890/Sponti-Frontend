@@ -28,6 +28,8 @@ fun String.formattedTimeToMinutes(): Int? {
     val hours = time[0].toIntOrNull() ?: return null
     val minutes = time[1].toIntOrNull() ?: return null
 
+    if (hours < 0 || minutes < 0 || minutes >= 60) return null
+
     return (hours * 60) + minutes
 }
 

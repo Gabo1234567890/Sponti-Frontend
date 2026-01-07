@@ -35,11 +35,15 @@ class CreateChallengeViewModel(
     }
 
     fun onPriceChange(value: String) {
-        _state.update { it.copy(price = value, priceError = null) }
+        if (!Regex("[^0-9]").containsMatchIn(value)) {
+            _state.update { it.copy(price = value, priceError = null) }
+        }
     }
 
     fun onDurationChange(value: String) {
-        _state.update { it.copy(duration = value, durationError = null) }
+        if (!Regex("[^0-9:]").containsMatchIn(value)) {
+            _state.update { it.copy(duration = value, durationError = null) }
+        }
     }
 
     fun onVehicleChange(value: VehicleType) {
@@ -56,8 +60,9 @@ class CreateChallengeViewModel(
 
     fun submit(onSuccess: () -> Unit) {
         val price = _state.value.price.trim().toIntOrNull()
-        val durationMinutes = _state.value.duration.trim().toIntOrNull() ?: _state.value.duration.trim()
-            .formattedTimeToMinutes()
+        val durationMinutes =
+            _state.value.duration.trim().toIntOrNull() ?: _state.value.duration.trim()
+                .formattedTimeToMinutes()
 
         when {
             _state.value.title.isBlank() -> {
@@ -80,7 +85,7 @@ class CreateChallengeViewModel(
                 return
             }
 
-            (durationMinutes == null || durationMinutes < 0) -> {
+            (durationMinutes == null || durationMinutes < 0 || durationMinutes > (24 * 60)) -> {
                 _state.update { it.copy(durationError = FieldError.InvalidFormat) }
                 return
             }

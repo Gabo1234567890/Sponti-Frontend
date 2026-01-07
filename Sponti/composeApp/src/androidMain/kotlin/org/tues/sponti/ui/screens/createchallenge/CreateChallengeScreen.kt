@@ -46,6 +46,7 @@ import org.tues.sponti.ui.components.PickerDialog
 import org.tues.sponti.ui.components.PrimaryButton
 import org.tues.sponti.ui.screens.common.FieldType
 import org.tues.sponti.ui.screens.common.createTempImageFile
+import org.tues.sponti.ui.screens.common.minutesToFormattedTimeString
 import org.tues.sponti.ui.screens.common.toTempFile
 import org.tues.sponti.ui.screens.common.toUiText
 import org.tues.sponti.ui.theme.Base0
@@ -220,6 +221,11 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                             onFocusChange = { focused ->
                                 durationState =
                                     if (focused) InputState.Active else if (state.duration.isEmpty()) InputState.Default else InputState.Filled
+                                if (durationState == InputState.Filled)
+                                    viewModel.onDurationChange(
+                                        if (state.duration.toIntOrNull() == null) state.duration else state.duration.toInt()
+                                            .minutesToFormattedTimeString()
+                                    )
                             },
                             modifier = Modifier.width(76.dp)
                         )
