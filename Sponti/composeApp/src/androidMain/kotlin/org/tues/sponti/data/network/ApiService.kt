@@ -4,8 +4,8 @@ import com.squareup.moshi.JsonClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.tues.sponti.data.chal.ChallengeDto
-import org.tues.sponti.data.chal.PlaceType
-import org.tues.sponti.data.chal.VehicleType
+import org.tues.sponti.data.part.CompletionImageDto
+import org.tues.sponti.data.user.UserDto
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
@@ -55,6 +55,13 @@ data class RefreshTokensResponse(val accessToken: String?, val refreshToken: Str
 data class FetchChallengesByFiltersResponse(
     val items: List<ChallengeDto>?,
     val count: Int?,
+    val page: Int?,
+    val perPage: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class GetMemoriesResponse(
+    val items: List<CompletionImageDto>?,
     val page: Int?,
     val perPage: Int?
 )
@@ -109,4 +116,13 @@ interface ApiService {
         @Part("vehicle") vehicle: RequestBody,
         @Part("placeType") placeType: RequestBody
     ): Response<ChallengeDto>
+
+    @GET("/users/me")
+    suspend fun getCurrentUser(): Response<UserDto>
+
+    @GET("/users/memories")
+    suspend fun getMemories(
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int
+    ): Response<GetMemoriesResponse>
 }

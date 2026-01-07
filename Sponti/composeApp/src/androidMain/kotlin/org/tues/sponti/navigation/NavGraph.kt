@@ -14,6 +14,7 @@ import org.tues.sponti.ui.screens.createchallenge.CreateChallengeScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
 import org.tues.sponti.ui.screens.home.HomeRoute
 import org.tues.sponti.ui.screens.login.LogInScreen
+import org.tues.sponti.ui.screens.profile.ProfileScreen
 import org.tues.sponti.ui.screens.verifyemail.VerifyEmailScreens
 
 @Composable
@@ -92,6 +93,15 @@ fun AppNavGraph(
         composable(route = Routes.ADD) {
             ProtectedScaffold(navController = navController) { paddingValues ->
                 CreateChallengeScreen(
+                    navController = navController,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+        }
+
+        composable(route = Routes.PROFILE) {
+            ProtectedScaffold(navController = navController) { paddingValues ->
+                ProfileScreen(
                     navController = navController,
                     modifier = Modifier.padding(paddingValues)
                 )
