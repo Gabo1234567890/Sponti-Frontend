@@ -16,4 +16,6 @@ object Routes {
     const val PROFILE = "profile"
 
     const val SETTINGS = "settings"
+
+    const val CHALLENGE = "challenge"
 }

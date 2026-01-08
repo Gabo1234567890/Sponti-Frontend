@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.tues.sponti.R
+import org.tues.sponti.navigation.Routes
 import org.tues.sponti.ui.components.ChallengeCard
 import org.tues.sponti.ui.components.MemoryCard
 import org.tues.sponti.ui.screens.common.FieldType
@@ -123,7 +124,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                     else -> {
                         Spacer(Modifier.height(24.dp))
                         ChallengeCard(it) {
-                            navController.navigate("challenge/${it.id}")
+                            navController.navigate("${Routes.CHALLENGE}/${it.id}")
                         }
                     }
                 }

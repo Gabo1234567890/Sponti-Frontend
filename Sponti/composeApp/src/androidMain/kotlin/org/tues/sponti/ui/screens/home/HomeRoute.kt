@@ -29,7 +29,7 @@ import org.tues.sponti.ui.screens.home.HomeFilter.Price
 import org.tues.sponti.ui.screens.home.HomeFilter.Vehicle
 
 @Composable
-fun HomeRoute(navController: NavHostController) {
+fun HomeRoute(navController: NavHostController, main: Boolean) {
     val viewModel: HomeViewModel = viewModel()
     val state by viewModel.state.collectAsState()
 
@@ -38,7 +38,7 @@ fun HomeRoute(navController: NavHostController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ProtectedScaffold(navController) { paddingValues ->
+        ProtectedScaffold(navController, main) { paddingValues ->
             HomeScreen(
                 navController = navController,
                 modifier = Modifier.padding(paddingValues = paddingValues),

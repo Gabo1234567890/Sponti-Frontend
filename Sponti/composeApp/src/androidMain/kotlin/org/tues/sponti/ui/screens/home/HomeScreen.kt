@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.tues.sponti.R
+import org.tues.sponti.navigation.Routes
 import org.tues.sponti.ui.components.AppliedFilterChip
 import org.tues.sponti.ui.components.ChallengeCard
 import org.tues.sponti.ui.components.FilterButton
@@ -187,7 +188,7 @@ fun HomeScreen(
             else -> {
                 items(items = state.challenges) {
                     ChallengeCard(it) {
-                        navController.navigate("challenge/${it.id}")
+                        navController.navigate("${Routes.CHALLENGE}/${it.id}")
                     }
                     Spacer(Modifier.height(24.dp))
                 }
