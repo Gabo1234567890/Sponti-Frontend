@@ -11,6 +11,7 @@ import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.data.part.PartRepository
 import org.tues.sponti.data.user.UserRepository
 import org.tues.sponti.ui.screens.common.FieldError
+import org.tues.sponti.ui.screens.common.toUi
 
 class ProfileViewModel(
     private val userRepository: UserRepository = UserRepository(),
@@ -62,7 +63,7 @@ class ProfileViewModel(
                     val body = resp.body()
 
                     if (body != null) {
-                        _state.update { it.copy(activeChallenge = body) }
+                        _state.update { it.copy(activeChallenge = body.map { dto -> dto.toUi() }) }
                     }
                 } else {
                     val errorJson = resp.errorBody()?.string()

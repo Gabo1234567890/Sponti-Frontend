@@ -37,4 +37,11 @@
     <string name="unknownTimeError">Unknown time duration error</string>
     <string name="emptyPlace">Place is empty</string>
     <string name="unknownPlaceError">Unknown place error</string>
+
+    <string name="profileScreenDescription">Here you can track your progress.</string>
+    <string name="profileScreenActiveChallenges">Active challenges (max 5):</string>
+    <string name="profileScreenNoActiveChallenges">No active challenges.</string>
+    <string name="profileScreenCompletedChallenges">Challenges completed:</string>
+    <string name="profileScreenMemories">Memories:</string>
+    <string name="profileScreenNoMemories">No images of completed challenges.</string>
 </resources>

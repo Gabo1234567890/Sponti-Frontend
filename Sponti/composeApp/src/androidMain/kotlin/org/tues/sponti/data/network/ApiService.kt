@@ -117,10 +117,10 @@ interface ApiService {
         @Part("placeType") placeType: RequestBody
     ): Response<ChallengeDto>
 
-    @GET("/users/me")
+    @GET("/user/me")
     suspend fun getCurrentUser(): Response<UserDto>
 
-    @GET("/users/memories")
+    @GET("/user/memories")
     suspend fun getMemories(
         @Query("page") page: Int,
         @Query("perPage") perPage: Int
