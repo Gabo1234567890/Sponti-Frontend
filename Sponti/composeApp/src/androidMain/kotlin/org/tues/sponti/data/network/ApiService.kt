@@ -13,6 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 @JsonClass(generateAdapter = true)
@@ -53,17 +54,17 @@ data class RefreshTokensResponse(val accessToken: String?, val refreshToken: Str
 
 @JsonClass(generateAdapter = true)
 data class FetchChallengesByFiltersResponse(
-    val items: List<ChallengeDto>?,
-    val count: Int?,
-    val page: Int?,
-    val perPage: Int?
+    val items: List<ChallengeDto>?, val count: Int?, val page: Int?, val perPage: Int?
 )
 
 @JsonClass(generateAdapter = true)
 data class GetMemoriesResponse(
-    val items: List<MemoryItemDto>?,
-    val page: Int?,
-    val perPage: Int?
+    val items: List<MemoryItemDto>?, val page: Int?, val perPage: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class GetParticipationStatusResponse(
+    val exists: Boolean, val isActive: Boolean, val completionCount: Int, val startedAt: String?
 )
 
 interface ApiService {
@@ -85,8 +86,7 @@ interface ApiService {
 
     @GET("/auth/verify-email")
     suspend fun verifyEmail(
-        @Query("token") token: String,
-        @Query("email") email: String
+        @Query("token") token: String, @Query("email") email: String
     ): Response<VerifyEmailResponse>
 
     @POST("/auth/refresh")
@@ -117,13 +117,15 @@ interface ApiService {
         @Part("placeType") placeType: RequestBody
     ): Response<ChallengeDto>
 
+    @GET("challenges/{id}")
+    suspend fun getChallengeById(@Path("id") id: String): Response<ChallengeDto>
+
     @GET("/user/me")
     suspend fun getCurrentUser(): Response<UserDto>
 
     @GET("/user/memories")
     suspend fun getMemories(
-        @Query("page") page: Int,
-        @Query("perPage") perPage: Int
+        @Query("page") page: Int, @Query("perPage") perPage: Int
     ): Response<GetMemoriesResponse>
 
     @GET("/participations/active")
@@ -131,4 +133,10 @@ interface ApiService {
 
     @GET("participations/completed-count")
     suspend fun getAllCompletedCount(): Response<Int>
+
+    @GET("participations/{challengeId}/status")
+    suspend fun getParticipationStatus(@Path("challengeId") challengeId: String): Response<GetParticipationStatusResponse>
+
+    @GET("participations/{challengeId}/completed-count")
+    suspend fun getChallengeCompletedCount(@Path("challengeId") challengeId: String): Response<Int>
 }
