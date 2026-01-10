@@ -4,6 +4,9 @@ import com.squareup.moshi.JsonClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.tues.sponti.data.chal.ChallengeDto
+import org.tues.sponti.data.part.CompletionImageDto
+import org.tues.sponti.data.part.ParticipationDto
+import org.tues.sponti.data.part.PublicCompletionImage
 import org.tues.sponti.data.user.MemoryItemDto
 import org.tues.sponti.data.user.UserDto
 import org.tues.sponti.ui.screens.common.FieldError
@@ -11,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -65,6 +69,13 @@ data class GetMemoriesResponse(
 @JsonClass(generateAdapter = true)
 data class GetParticipationStatusResponse(
     val exists: Boolean, val isActive: Boolean, val completionCount: Int, val startedAt: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class GetPublicCompletionImagesResponse(
+    val items: List<PublicCompletionImage>?,
+    val page: Int?,
+    val perPage: Int?
 )
 
 interface ApiService {
@@ -128,6 +139,15 @@ interface ApiService {
         @Query("page") page: Int, @Query("perPage") perPage: Int
     ): Response<GetMemoriesResponse>
 
+    @POST("participations/{challengeId}/start")
+    suspend fun startChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
+
+    @PATCH("participations/{challengeId}/cancel")
+    suspend fun cancelChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
+
+    @PATCH("participations/{challengeId}/complete")
+    suspend fun completeChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
+
     @GET("/participations/active")
     suspend fun getActiveParticipations(): Response<List<ChallengeDto>>
 
@@ -139,4 +159,11 @@ interface ApiService {
 
     @GET("participations/{challengeId}/completed-count")
     suspend fun getChallengeCompletedCount(@Path("challengeId") challengeId: String): Response<Int>
+
+    @GET("participations/{challengeId}/public-images")
+    suspend fun getPublicCompletionImages(
+        @Path("challengeId") challengeId: String,
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int
+    ): Response<GetPublicCompletionImagesResponse>
 }
