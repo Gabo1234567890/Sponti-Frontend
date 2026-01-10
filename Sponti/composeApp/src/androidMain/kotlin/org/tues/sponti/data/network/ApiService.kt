@@ -68,7 +68,7 @@ data class GetMemoriesResponse(
 
 @JsonClass(generateAdapter = true)
 data class GetParticipationStatusResponse(
-    val exists: Boolean, val isActive: Boolean, val completionCount: Int, val startedAt: String?
+    val exists: Boolean?, val isActive: Boolean?, val completionCount: Int?, val startedAt: String?
 )
 
 @JsonClass(generateAdapter = true)
