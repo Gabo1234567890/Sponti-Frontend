@@ -44,4 +44,7 @@
     <string name="profileScreenCompletedChallenges">Challenges completed:</string>
     <string name="profileScreenMemories">Memories:</string>
     <string name="profileScreenNoMemories">No images of completed challenges.</string>
+
+    <string name="challengeScreenTimesCompleted">Times completed:</string>
+    <string name="challengeScreenNoCompletionImages">No public completion images.</string>
 </resources>
