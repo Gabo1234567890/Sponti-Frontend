@@ -45,6 +45,15 @@
     <string name="profileScreenMemories">Memories:</string>
     <string name="profileScreenNoMemories">No images of completed challenges.</string>
 
+    <string name="pickerDialogTitle">Select image source</string>
+    <string name="createChallengePickerDialogDescription">Choose how you want to add an image for the thumbnail.</string>
+    <string name="challengePickerDialogDescription">Choose how you want to add a completion image.</string>
+
     <string name="challengeScreenTimesCompleted">Times completed:</string>
     <string name="challengeScreenNoCompletionImages">No public completion images.</string>
+
+    <string name="finishConfirmationDialogTitle">Finish challenge</string>
+    <string name="finishConfirmationDialogDescription">Are you sure you want to finish this challenge? You will be able to upload images.</string>
+    <string name="finishUploadDialogTitle">Upload images</string>
+    <string name="finishUploadDialogDescription">You can upload up to 3 images (optional). If you finish you cannot go back.</string>
 </resources>

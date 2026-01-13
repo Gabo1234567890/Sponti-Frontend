@@ -1,11 +1,15 @@
 package org.tues.sponti.data.part
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.tues.sponti.data.chal.ChallengeDto
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.GetParticipationStatusResponse
 import org.tues.sponti.data.network.GetPublicCompletionImagesResponse
 import org.tues.sponti.data.network.RetrofitClient
 import retrofit2.Response
+import java.io.File
 
 class PartRepository(private val api: ApiService = RetrofitClient.api) {
     suspend fun startChallenge(challengeId: String): Response<ParticipationDto> {
@@ -45,6 +49,25 @@ class PartRepository(private val api: ApiService = RetrofitClient.api) {
             challengeId = challengeId,
             page = page,
             perPage = perPage
+        )
+    }
+
+    suspend fun uploadImages(
+        challengeId: String,
+        images: List<File>
+    ): Response<List<CompletionImageDto>> {
+
+        val imageParts = images.map { file ->
+            MultipartBody.Part.createFormData(
+                name = "images",
+                filename = file.name,
+                body = file.asRequestBody("image/*".toMediaType())
+            )
+        }
+
+        return api.uploadImages(
+            challengeId = challengeId,
+            images = imageParts
         )
     }
 }

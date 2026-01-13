@@ -1,5 +1,7 @@
 package org.tues.sponti.ui.screens.challenge
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -28,26 +31,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.content.FileProvider
 import coil3.compose.AsyncImage
 import org.tues.sponti.R
 import org.tues.sponti.ui.components.ButtonSize
 import org.tues.sponti.ui.components.ButtonState
 import org.tues.sponti.ui.components.ChallengeDetailChip
+import org.tues.sponti.ui.components.FinishConfirmationDialog
+import org.tues.sponti.ui.components.FinishUploadDialog
+import org.tues.sponti.ui.components.PickerDialog
 import org.tues.sponti.ui.components.PrimaryButton
 import org.tues.sponti.ui.screens.common.FieldType
+import org.tues.sponti.ui.screens.common.FinishChallengeFlowStep
+import org.tues.sponti.ui.screens.common.createTempImageFile
 import org.tues.sponti.ui.screens.common.minutesToFormattedTimeString
+import org.tues.sponti.ui.screens.common.toTempFile
 import org.tues.sponti.ui.screens.common.toUiText
 import org.tues.sponti.ui.theme.Base0
 import org.tues.sponti.ui.theme.Base100
@@ -58,6 +71,7 @@ import org.tues.sponti.ui.theme.Heading5
 import org.tues.sponti.ui.theme.Heading7
 import org.tues.sponti.ui.theme.Paragraph1
 import org.tues.sponti.ui.theme.Primary1
+import java.io.File
 
 @Composable
 fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
@@ -70,10 +84,12 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
     })
     val state by viewModel.state.collectAsState()
 
+    val context = LocalContext.current
+
     val focusManager = LocalFocusManager.current
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val globalErrorText = state.globalError?.toUiText(FieldType.GLOBAL)
+    var globalErrorText = state.globalError?.toUiText(FieldType.GLOBAL)
 
     LaunchedEffect(globalErrorText) {
         globalErrorText?.let {
@@ -81,10 +97,36 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
         }
     }
 
+    var showPicker by remember { mutableStateOf(false) }
+
+    var tempCameraFile by remember { mutableStateOf<File?>(null) }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                tempCameraFile?.let { file ->
+                    viewModel.onAddCompletionImage(file)
+                }
+            }
+        }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            uri ?: return@rememberLauncherForActivityResult
+
+            val file = uri.toTempFile(context)
+
+            if (file != null) {
+                viewModel.onAddCompletionImage(file)
+            } else globalErrorText = "Cannot open input stream from URI"
+        }
+
     Box(
-        modifier = modifier.fillMaxSize().padding(bottom = 24.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 24.dp)
     ) {
-        if (state.isLoading && state.challengeData == null) {
+        if (state.isLoading || state.challengeData == null) {
             Text(
                 text = "Loading...", style = Heading4, color = Primary1
             )
@@ -124,10 +166,6 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                     }
                 }
                 when {
-                    state.isLoading -> Text(
-                        text = "Loading...", style = Heading4, color = Primary1
-                    )
-
                     state.publicCompletionImages.isEmpty() -> Text(
                         text = stringResource(R.string.challengeScreenNoCompletionImages),
                         style = Heading4,
@@ -135,27 +173,32 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                     )
 
                     else -> {
-                        LazyRow(
+                        Box(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            contentAlignment = Alignment.Center
                         ) {
-                            items(state.publicCompletionImages) {
-                                AsyncImage(
-                                    model = it.url,
-                                    contentDescription = "Completion image",
-                                    modifier = Modifier
-                                        .size(200.dp)
-                                        .shadow(
-                                            elevation = 16.dp,
-                                            shape = RoundedCornerShape(16.dp),
-                                            clip = false,
-                                            spotColor = Color.Black.copy(alpha = 0.1f)
-                                        )
-                                        .clip(shape = RoundedCornerShape(20.dp)),
-                                    contentScale = ContentScale.Crop,
-                                    placeholder = painterResource(R.drawable.image_placeholder),
-                                    error = painterResource(R.drawable.image_placeholder)
-                                )
+                            LazyRow(
+                                modifier = Modifier.wrapContentWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                items(state.publicCompletionImages) {
+                                    AsyncImage(
+                                        model = it.url,
+                                        contentDescription = "Completion image",
+                                        modifier = Modifier
+                                            .shadow(
+                                                elevation = 16.dp,
+                                                shape = RoundedCornerShape(16.dp),
+                                                clip = false,
+                                                spotColor = Color.Black.copy(alpha = 0.1f)
+                                            )
+                                            .size(200.dp)
+                                            .clip(shape = RoundedCornerShape(20.dp)),
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(R.drawable.image_placeholder),
+                                        error = painterResource(R.drawable.image_placeholder)
+                                    )
+                                }
                             }
                         }
                     }
@@ -212,9 +255,7 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
-                            text = state.challengeData!!.place,
-                            style = Heading7,
-                            color = Primary1
+                            text = state.challengeData!!.place, style = Heading7, color = Primary1
                         )
                     }
                     Row(
@@ -243,7 +284,7 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                         )
                     }
                 }
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
@@ -255,23 +296,63 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                             size = ButtonSize.Large,
                             state = ButtonState.Active,
                             modifier = Modifier.fillMaxWidth()
-                        ) { viewModel.startChallenge(challengeId = challengeId, onSuccess = {}) }
+                        ) { viewModel.startChallenge(challengeId = challengeId) }
                     } else {
                         PrimaryButton(
                             text = "Cancel",
                             size = ButtonSize.Large,
                             state = ButtonState.Active,
-                            modifier = Modifier.background(Base80)
-                        ) { viewModel.cancelChallenge(challengeId = challengeId, onSuccess = {}) }
+                            color = Base80,
+                            modifier = Modifier.weight(1f)
+                        ) { viewModel.cancelChallenge(challengeId = challengeId) }
                         PrimaryButton(
                             text = "Finish",
                             size = ButtonSize.Large,
                             state = ButtonState.Active,
-                            modifier = Modifier.background(Base80)
-                        ) { viewModel.completeChallenge(challengeId = challengeId, onSuccess = {}) }
+                            modifier = Modifier.weight(1f)
+                        ) { viewModel.onFinishStepChange(FinishChallengeFlowStep.CONFIRM) }
                     }
                 }
             }
+        }
+        when (state.finishStep) {
+            FinishChallengeFlowStep.NONE -> Unit
+
+            FinishChallengeFlowStep.CONFIRM -> {
+                FinishConfirmationDialog(
+                    onConfirm = { viewModel.onFinishStepChange(FinishChallengeFlowStep.UPLOAD) },
+                    onDismiss = { viewModel.onFinishStepChange(FinishChallengeFlowStep.NONE) })
+            }
+
+            FinishChallengeFlowStep.UPLOAD -> {
+                FinishUploadDialog(
+                    images = state.completionImages,
+                    isSubmitting = state.isSubmittingFinish,
+                    onAddImage = { showPicker = true },
+                    onFinish = { viewModel.completeChallenge(challengeId = challengeId) },
+                    onDismiss = { viewModel.onFinishStepChange(FinishChallengeFlowStep.NONE) },
+                    onRemove = { viewModel.onRemoveCompletionImage(it) }
+                )
+            }
+        }
+        if (showPicker) {
+            PickerDialog(
+                onGallery = {
+                    showPicker = false
+                    galleryLauncher.launch("image/*")
+                },
+                onCamera = {
+                    showPicker = false
+                    val file = context.createTempImageFile()
+                    tempCameraFile = file
+                    val uri = FileProvider.getUriForFile(
+                        context, "${context.packageName}.fileprovider", file
+                    )
+                    cameraLauncher.launch(uri)
+                },
+                onDismiss = { showPicker = false },
+                descriptionId = R.string.challengePickerDialogDescription
+            )
         }
     }
 }

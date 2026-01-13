@@ -139,6 +139,13 @@ interface ApiService {
         @Query("page") page: Int, @Query("perPage") perPage: Int
     ): Response<GetMemoriesResponse>
 
+    @Multipart
+    @POST("participations/{challengeId}/images")
+    suspend fun uploadImages(
+        @Path("challengeId") challengeId: String,
+        @Part images: List<MultipartBody.Part>
+    ): Response<List<CompletionImageDto>>
+
     @POST("participations/{challengeId}/start")
     suspend fun startChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
 

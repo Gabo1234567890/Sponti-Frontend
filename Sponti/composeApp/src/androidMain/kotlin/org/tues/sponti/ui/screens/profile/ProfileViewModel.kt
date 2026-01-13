@@ -2,10 +2,12 @@ package org.tues.sponti.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.tues.sponti.core.AppEvents
 import org.tues.sponti.data.network.ErrorResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.data.part.PartRepository
@@ -21,112 +23,106 @@ class ProfileViewModel(
     val state = _state.asStateFlow()
 
     init {
-        getUserData()
-        getActiveChallenges()
-        getCompletedCount()
-        getMemories()
+        loadData()
+
+        viewModelScope.launch {
+            AppEvents.challengeCompleted.collect {
+                loadData()
+            }
+        }
     }
 
-    fun getUserData() {
+    private fun loadData() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
+
             try {
-                val resp = userRepository.getCurrentUser()
-
-                if (resp.isSuccessful) {
-                    val body = resp.body()
-
-                    if (body != null) {
-                        _state.update { it.copy(userData = body) }
-                    }
-                } else {
-                    val errorJson = resp.errorBody()?.string()
-                    val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                    val parsed = errorJson?.let { adapter.fromJson(it) }
-                    _state.update { it.copy(globalError = parsed?.toFieldError()) }
+                coroutineScope {
+                    launch { getUserData() }
+                    launch { getActiveChallenges() }
+                    launch { getCompletedCount() }
+                    launch { getMemories() }
                 }
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }
             } finally {
                 _state.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun getUserData() {
+        viewModelScope.launch {
+            val resp = userRepository.getCurrentUser()
+
+            if (resp.isSuccessful) {
+                val body = resp.body()
+
+                if (body != null) {
+                    _state.update { it.copy(userData = body) }
+                }
+            } else {
+                val errorJson = resp.errorBody()?.string()
+                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
+                val parsed = errorJson?.let { adapter.fromJson(it) }
+                _state.update { it.copy(globalError = parsed?.toFieldError()) }
             }
         }
     }
 
     fun getActiveChallenges() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                val resp = partRepository.getActiveParticipations()
+            val resp = partRepository.getActiveParticipations()
 
-                if (resp.isSuccessful) {
-                    val body = resp.body()
+            if (resp.isSuccessful) {
+                val body = resp.body()
 
-                    if (body != null) {
-                        _state.update { it.copy(activeChallenge = body.map { dto -> dto.toUi() }) }
-                    }
-                } else {
-                    val errorJson = resp.errorBody()?.string()
-                    val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                    val parsed = errorJson?.let { adapter.fromJson(it) }
-                    _state.update { it.copy(globalError = parsed?.toFieldError()) }
+                if (body != null) {
+                    _state.update { it.copy(activeChallenge = body.map { dto -> dto.toUi() }) }
                 }
-            } catch (_: Exception) {
-                _state.update { it.copy(globalError = FieldError.Network) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
+            } else {
+                val errorJson = resp.errorBody()?.string()
+                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
+                val parsed = errorJson?.let { adapter.fromJson(it) }
+                _state.update { it.copy(globalError = parsed?.toFieldError()) }
             }
         }
     }
 
     fun getCompletedCount() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                val resp = partRepository.getAllCompletedCount()
+            val resp = partRepository.getAllCompletedCount()
 
-                if (resp.isSuccessful) {
-                    val body = resp.body()
+            if (resp.isSuccessful) {
+                val body = resp.body()
 
-                    if (body != null) {
-                        _state.update { it.copy(completedCount = body) }
-                    }
-                } else {
-                    val errorJson = resp.errorBody()?.string()
-                    val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                    val parsed = errorJson?.let { adapter.fromJson(it) }
-                    _state.update { it.copy(globalError = parsed?.toFieldError()) }
+                if (body != null) {
+                    _state.update { it.copy(completedCount = body) }
                 }
-            } catch (_: Exception) {
-                _state.update { it.copy(globalError = FieldError.Network) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
+            } else {
+                val errorJson = resp.errorBody()?.string()
+                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
+                val parsed = errorJson?.let { adapter.fromJson(it) }
+                _state.update { it.copy(globalError = parsed?.toFieldError()) }
             }
         }
     }
 
     fun getMemories() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                val resp = userRepository.getMemories()
+            val resp = userRepository.getMemories()
 
-                if (resp.isSuccessful) {
-                    val body = resp.body()
+            if (resp.isSuccessful) {
+                val body = resp.body()
 
-                    if (body?.items != null) {
-                        _state.update { it.copy(memories = body.items) }
-                    }
-                } else {
-                    val errorJson = resp.errorBody()?.string()
-                    val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                    val parsed = errorJson?.let { adapter.fromJson(it) }
-                    _state.update { it.copy(globalError = parsed?.toFieldError()) }
+                if (body?.items != null) {
+                    _state.update { it.copy(memories = body.items) }
                 }
-            } catch (_: Exception) {
-                _state.update { it.copy(globalError = FieldError.Network) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
+            } else {
+                val errorJson = resp.errorBody()?.string()
+                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
+                val parsed = errorJson?.let { adapter.fromJson(it) }
+                _state.update { it.copy(globalError = parsed?.toFieldError()) }
             }
         }
     }
