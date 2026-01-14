@@ -2,7 +2,6 @@ package org.tues.sponti.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,7 +25,7 @@ class ProfileViewModel(
         loadData()
 
         viewModelScope.launch {
-            AppEvents.challengeCompleted.collect {
+            AppEvents.challengeInteracted.collect {
                 loadData()
             }
         }
@@ -37,12 +36,10 @@ class ProfileViewModel(
             _state.update { it.copy(isLoading = true) }
 
             try {
-                coroutineScope {
-                    launch { getUserData() }
-                    launch { getActiveChallenges() }
-                    launch { getCompletedCount() }
-                    launch { getMemories() }
-                }
+                getUserData()
+                getActiveChallenges()
+                getCompletedCount()
+                getMemories()
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }
             } finally {

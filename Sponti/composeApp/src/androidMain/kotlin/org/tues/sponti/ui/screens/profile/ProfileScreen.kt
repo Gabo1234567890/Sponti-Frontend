@@ -70,8 +70,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
             .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
             .background(Base0)
             .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        horizontalAlignment = Alignment.CenterHorizontally) {
         if (state.isLoading && state.userData == null) {
             item {
                 Text(
@@ -101,8 +100,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Base80
                 )
+                Spacer(Modifier.height(32.dp))
             }
-            items(items = state.activeChallenge) {
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start
                 ) {
@@ -112,6 +112,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                         color = Base100
                     )
                 }
+                Spacer(Modifier.height(4.dp))
+            }
+            items(items = state.activeChallenge) {
                 when {
                     state.isLoading -> Text(
                         text = "Loading...", style = Heading4, color = Primary1
@@ -132,6 +135,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                 }
             }
             item {
+                Spacer(Modifier.height(32.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
@@ -147,6 +151,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                         text = state.completedCount.toString(), style = Heading2, color = Primary1
                     )
                 }
+                Spacer(Modifier.height(32.dp))
             }
             item {
                 Row(

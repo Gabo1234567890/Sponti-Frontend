@@ -35,11 +35,9 @@ class ChallengeViewModel(
             _state.update { it.copy(isLoading = true) }
 
             try {
-                coroutineScope {
-                    launch { getChallengeData(challengeId = challengeId) }
-                    launch { getPublicCompletionImages(challengeId = challengeId) }
-                    launch { getParticipationStatus(challengeId = challengeId) }
-                }
+                getChallengeData(challengeId = challengeId)
+                getPublicCompletionImages(challengeId = challengeId)
+                getParticipationStatus(challengeId = challengeId)
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }
             } finally {
@@ -117,6 +115,7 @@ class ChallengeViewModel(
                 val resp = partRepository.startChallenge(challengeId = challengeId)
 
                 if (resp.isSuccessful) {
+                    AppEvents.notifyChallengeInteracted()
                     loadData(challengeId = challengeId)
                 } else {
                     val errorJson = resp.errorBody()?.string()
@@ -139,6 +138,7 @@ class ChallengeViewModel(
                 val resp = partRepository.cancelChallenge(challengeId = challengeId)
 
                 if (resp.isSuccessful) {
+                    AppEvents.notifyChallengeInteracted()
                     loadData(challengeId = challengeId)
                 } else {
                     val errorJson = resp.errorBody()?.string()
@@ -183,7 +183,7 @@ class ChallengeViewModel(
                     }
                 }
 
-                AppEvents.notifyChallengeCompleted()
+                AppEvents.notifyChallengeInteracted()
                 loadData(challengeId = challengeId)
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }

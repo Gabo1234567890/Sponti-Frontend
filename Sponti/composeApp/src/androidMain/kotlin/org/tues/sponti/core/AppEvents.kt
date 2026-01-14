@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 object AppEvents {
-    private val _challengeCompleted = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-    val challengeCompleted = _challengeCompleted.asSharedFlow()
+    private val _challengeInteracted = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val challengeInteracted = _challengeInteracted.asSharedFlow()
 
-    suspend fun notifyChallengeCompleted() {
-        _challengeCompleted.emit(Unit)
+    suspend fun notifyChallengeInteracted() {
+        _challengeInteracted.emit(Unit)
     }
 }
