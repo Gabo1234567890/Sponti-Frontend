@@ -3,6 +3,7 @@ package org.tues.sponti.ui.screens.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.tues.sponti.R
+import org.tues.sponti.navigation.Routes
 import org.tues.sponti.ui.components.ChallengeCard
 import org.tues.sponti.ui.components.MemoryCard
 import org.tues.sponti.ui.screens.common.FieldType
@@ -67,8 +70,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
             .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
             .background(Base0)
             .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        horizontalAlignment = Alignment.CenterHorizontally) {
         if (state.isLoading && state.userData == null) {
             item {
                 Text(
@@ -98,8 +100,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Base80
                 )
+                Spacer(Modifier.height(32.dp))
             }
-            items(items = state.activeChallenge) {
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start
                 ) {
@@ -109,6 +112,9 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                         color = Base100
                     )
                 }
+                Spacer(Modifier.height(4.dp))
+            }
+            items(items = state.activeChallenge) {
                 when {
                     state.isLoading -> Text(
                         text = "Loading...", style = Heading4, color = Primary1
@@ -123,12 +129,13 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                     else -> {
                         Spacer(Modifier.height(24.dp))
                         ChallengeCard(it) {
-                            navController.navigate("challenge/${it.id}")
+                            navController.navigate("${Routes.CHALLENGE}/${it.id}")
                         }
                     }
                 }
             }
             item {
+                Spacer(Modifier.height(32.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
@@ -144,6 +151,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                         text = state.completedCount.toString(), style = Heading2, color = Primary1
                     )
                 }
+                Spacer(Modifier.height(32.dp))
             }
             item {
                 Row(
@@ -168,11 +176,16 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
                     )
 
                     else -> {
-                        LazyRow(
+                        Box(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            contentAlignment = Alignment.Center
                         ) {
-                            items(state.memories) { MemoryCard(it) }
+                            LazyRow(
+                                modifier = Modifier.wrapContentWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                items(state.memories) { MemoryCard(it) }
+                            }
                         }
                         Spacer(Modifier.height(20.dp))
                     }

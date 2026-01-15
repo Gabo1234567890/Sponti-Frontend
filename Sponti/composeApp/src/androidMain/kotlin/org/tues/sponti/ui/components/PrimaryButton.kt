@@ -1,5 +1,6 @@
 package org.tues.sponti.ui.components
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,9 +29,10 @@ fun PrimaryButton(
     size: ButtonSize,
     state: ButtonState,
     modifier: Modifier = Modifier,
+    color: Color? = null,
     onClick: () -> Unit
 ) {
-    val backGroundColor = if (state == ButtonState.Active) Primary1 else Base80
+    val backGroundColor = color ?: if (state == ButtonState.Active) Primary1 else Base80
 
     val shape = RoundedCornerShape(16.dp)
 

@@ -116,15 +116,22 @@ fun ChallengeCard(
             Spacer(Modifier.height(16.dp))
 
             Row {
-                ChallengeDetailChip(R.drawable.price, challenge.price.toString())
-                Spacer(Modifier.width(12.dp))
                 ChallengeDetailChip(
-                    R.drawable.time, challenge.duration.minutesToFormattedTimeString()
+                    iconId = R.drawable.price,
+                    text = challenge.price.toString(),
+                    small = true
                 )
                 Spacer(Modifier.width(12.dp))
                 ChallengeDetailChip(
-                    R.drawable.vehicle,
-                    challenge.vehicle.name.lowercase().replaceFirstChar { it.uppercase() }
+                    iconId = R.drawable.time,
+                    text = challenge.duration.minutesToFormattedTimeString(),
+                    small = true
+                )
+                Spacer(Modifier.width(12.dp))
+                ChallengeDetailChip(
+                    iconId = R.drawable.vehicle,
+                    text = challenge.vehicle.name.lowercase().replaceFirstChar { it.uppercase() },
+                    small = true
                 )
             }
         }

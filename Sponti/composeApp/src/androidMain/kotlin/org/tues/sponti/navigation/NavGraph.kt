@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import org.tues.sponti.ui.screens.challenge.ChallengeScreen
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
 import org.tues.sponti.ui.screens.createchallenge.CreateChallengeScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
@@ -87,11 +88,11 @@ fun AppNavGraph(
         }
 
         composable(route = Routes.HOME) {
-            HomeRoute(navController)
+            HomeRoute(navController = navController, main = true)
         }
 
         composable(route = Routes.ADD) {
-            ProtectedScaffold(navController = navController) { paddingValues ->
+            ProtectedScaffold(navController = navController, main = true) { paddingValues ->
                 CreateChallengeScreen(
                     navController = navController,
                     modifier = Modifier.padding(paddingValues)
@@ -100,9 +101,21 @@ fun AppNavGraph(
         }
 
         composable(route = Routes.PROFILE) {
-            ProtectedScaffold(navController = navController) { paddingValues ->
+            ProtectedScaffold(navController = navController, main = true) { paddingValues ->
                 ProfileScreen(
                     navController = navController,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+        }
+
+        composable(route = Routes.CHALLENGE + "/{id}", arguments = listOf(navArgument("id"){
+            type = NavType.StringType
+            nullable = false
+        })) { backStackEntry ->
+            ProtectedScaffold(navController = navController, main = false) { paddingValues ->
+                ChallengeScreen(
+                    challengeId = backStackEntry.arguments?.getString("id") ?: "",
                     modifier = Modifier.padding(paddingValues)
                 )
             }

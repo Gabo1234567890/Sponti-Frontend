@@ -61,4 +61,8 @@ class ChalRepository(private val api: ApiService = RetrofitClient.api) {
             placeType = placeType.name.lowercase().toRequestBody()
         )
     }
+
+    suspend fun getChallengeById(id: String): Response<ChallengeDto> {
+        return api.getChallengeById(id = id)
+    }
 }

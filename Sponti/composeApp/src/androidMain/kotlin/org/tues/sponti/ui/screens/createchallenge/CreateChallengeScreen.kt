@@ -327,7 +327,8 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
                     )
                     cameraLauncher.launch(uri)
                 },
-                onDismiss = { showPicker = false }
+                onDismiss = { showPicker = false },
+                descriptionId = R.string.createChallengePickerDialogDescription
             )
         }
     }
