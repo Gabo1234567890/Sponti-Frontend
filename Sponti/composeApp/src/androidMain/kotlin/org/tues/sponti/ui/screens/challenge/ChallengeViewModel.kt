@@ -2,7 +2,6 @@ package org.tues.sponti.ui.screens.challenge
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,83 +26,39 @@ class ChallengeViewModel(
     val state = _state.asStateFlow()
 
     init {
-        loadData(challengeId = challengeId)
-    }
-
-    private fun loadData(challengeId: String) {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-
-            try {
-                getChallengeData(challengeId = challengeId)
-                getPublicCompletionImages(challengeId = challengeId)
-                getParticipationStatus(challengeId = challengeId)
-            } catch (_: Exception) {
-                _state.update { it.copy(globalError = FieldError.Network) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
-            }
-        }
+        getChallengeData(challengeId = challengeId)
     }
 
     fun getChallengeData(challengeId: String) {
         viewModelScope.launch {
-            val resp = chalRepository.getChallengeById(id = challengeId)
+            _state.update { it.copy(isLoading = true) }
 
-            if (resp.isSuccessful) {
-                val body = resp.body()
+            try {
+                val resp = chalRepository.getChallengeById(id = challengeId)
 
-                if (body != null) {
-                    _state.update { it.copy(challengeData = body.toUi()) }
-                }
-            } else {
-                val errorJson = resp.errorBody()?.string()
-                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                val parsed = errorJson?.let { adapter.fromJson(it) }
-                _state.update { it.copy(globalError = parsed?.toFieldError()) }
-            }
-        }
-    }
+                if (resp.isSuccessful) {
+                    val body = resp.body()
 
-    fun getPublicCompletionImages(challengeId: String) {
-        viewModelScope.launch {
-            val resp = partRepository.getPublicCompletionImages(challengeId = challengeId)
-
-            if (resp.isSuccessful) {
-                val body = resp.body()
-
-                if (body?.items != null) {
-                    _state.update { it.copy(publicCompletionImages = body.items) }
-                }
-            } else {
-                val errorJson = resp.errorBody()?.string()
-                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                val parsed = errorJson?.let { adapter.fromJson(it) }
-                _state.update { it.copy(globalError = parsed?.toFieldError()) }
-            }
-        }
-    }
-
-    fun getParticipationStatus(challengeId: String) {
-        viewModelScope.launch {
-            val resp = partRepository.getParticipationStatus(challengeId = challengeId)
-
-            if (resp.isSuccessful) {
-                val body = resp.body()
-
-                if (body?.isActive != null && body.completionCount != null) {
-                    _state.update {
-                        it.copy(
-                            isActive = body.isActive,
-                            completedCount = body.completionCount
-                        )
+                    if (body?.challenge != null && body.publicCompletionImages?.items != null && body.status?.isActive != null && body.status.completionCount != null) {
+                        _state.update {
+                            it.copy(
+                                challengeData = body.challenge.toUi(),
+                                publicCompletionImages = body.publicCompletionImages.items,
+                                isActive = body.status.isActive,
+                                completedCount = body.status.completionCount
+                            )
+                        }
                     }
+                } else {
+                    val errorJson = resp.errorBody()?.string()
+                    val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
+                    val parsed = errorJson?.let { adapter.fromJson(it) }
+                    _state.update { it.copy(globalError = parsed?.toFieldError()) }
                 }
-            } else {
-                val errorJson = resp.errorBody()?.string()
-                val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
-                val parsed = errorJson?.let { adapter.fromJson(it) }
-                _state.update { it.copy(globalError = parsed?.toFieldError()) }
+            } catch (_: Exception) {
+                _state.update { it.copy(globalError = FieldError.Network) }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -116,7 +71,7 @@ class ChallengeViewModel(
 
                 if (resp.isSuccessful) {
                     AppEvents.notifyChallengeInteracted()
-                    loadData(challengeId = challengeId)
+                    getChallengeData(challengeId = challengeId)
                 } else {
                     val errorJson = resp.errorBody()?.string()
                     val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
@@ -139,7 +94,7 @@ class ChallengeViewModel(
 
                 if (resp.isSuccessful) {
                     AppEvents.notifyChallengeInteracted()
-                    loadData(challengeId = challengeId)
+                    getChallengeData(challengeId = challengeId)
                 } else {
                     val errorJson = resp.errorBody()?.string()
                     val adapter = RetrofitClient.getMoshi().adapter(ErrorResponse::class.java)
@@ -184,7 +139,7 @@ class ChallengeViewModel(
                 }
 
                 AppEvents.notifyChallengeInteracted()
-                loadData(challengeId = challengeId)
+                getChallengeData(challengeId = challengeId)
             } catch (_: Exception) {
                 _state.update { it.copy(globalError = FieldError.Network) }
             } finally {

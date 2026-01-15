@@ -6,6 +6,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.FetchChallengesByFiltersResponse
+import org.tues.sponti.data.network.GetChallengeByIdResponse
 import org.tues.sponti.data.network.RetrofitClient
 import retrofit2.Response
 import java.io.File
@@ -62,7 +63,15 @@ class ChalRepository(private val api: ApiService = RetrofitClient.api) {
         )
     }
 
-    suspend fun getChallengeById(id: String): Response<ChallengeDto> {
-        return api.getChallengeById(id = id)
+    suspend fun getChallengeById(
+        id: String,
+        completionImagesPage: Int = 1,
+        completionImagesPerPage: Int = 10
+    ): Response<GetChallengeByIdResponse> {
+        return api.getChallengeById(
+            id = id,
+            completionImagesPage = completionImagesPage,
+            completionImagesPerPage = completionImagesPerPage
+        )
     }
 }
