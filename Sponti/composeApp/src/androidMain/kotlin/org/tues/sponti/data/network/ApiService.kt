@@ -8,10 +8,12 @@ import org.tues.sponti.data.part.CompletionImageDto
 import org.tues.sponti.data.part.ParticipationDto
 import org.tues.sponti.data.part.PublicCompletionImage
 import org.tues.sponti.data.user.MemoryItemDto
+import org.tues.sponti.data.user.Role
 import org.tues.sponti.data.user.UserDto
 import org.tues.sponti.ui.screens.common.FieldError
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -93,6 +95,27 @@ data class GetChallengeByIdResponse(
     val status: GetParticipationStatusResponse?
 )
 
+@JsonClass(generateAdapter = true)
+data class GetAccountDetailsResponse(
+    val username: String?,
+    val email: String?,
+    val role: Role?
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchCurrentUserRequest(
+    val username: String?,
+    val allowPublicImages: Boolean?
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchCurrentUserResponse(
+    val id: String?,
+    val email: String?,
+    val username: String?,
+    val allowPublicImages: Boolean?
+)
+
 interface ApiService {
     @POST("/auth/signup")
     suspend fun signup(@Body req: SignupRequest): Response<SignupResponse>
@@ -117,6 +140,9 @@ interface ApiService {
 
     @POST("/auth/refresh")
     suspend fun refreshTokens(@Body req: RefreshTokensRequest): Response<RefreshTokensResponse>
+
+    @POST("/auth/logout")
+    suspend fun logout(): Response<String>
 
     @GET("/challenges")
     suspend fun fetchChallengesByFilters(
@@ -156,6 +182,15 @@ interface ApiService {
         @Query("memoryPerPage") memoryPerPage: Int
     ): Response<GetCurrentUserDataResponse>
 
+    @GET("/user/account-details")
+    suspend fun getAccountDetails(): Response<GetAccountDetailsResponse>
+
+    @PATCH("/user/me")
+    suspend fun patchCurrentUser(@Body req: PatchCurrentUserRequest): Response<PatchCurrentUserResponse>
+
+    @DELETE("/user/me")
+    suspend fun deleteCurrentUser(): Response<String>
+
     @Multipart
     @POST("participations/{challengeId}/images")
     suspend fun uploadImages(
@@ -171,11 +206,4 @@ interface ApiService {
 
     @PATCH("participations/{challengeId}/complete")
     suspend fun completeChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
-
-    @GET("participations/{challengeId}/public-images")
-    suspend fun getPublicCompletionImages(
-        @Path("challengeId") challengeId: String,
-        @Query("page") page: Int,
-        @Query("perPage") perPage: Int
-    ): Response<GetPublicCompletionImagesResponse>
 }

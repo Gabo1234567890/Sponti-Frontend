@@ -16,6 +16,7 @@ import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
 import org.tues.sponti.ui.screens.home.HomeRoute
 import org.tues.sponti.ui.screens.login.LogInScreen
 import org.tues.sponti.ui.screens.profile.ProfileScreen
+import org.tues.sponti.ui.screens.settings.SettingsScreen
 import org.tues.sponti.ui.screens.verifyemail.VerifyEmailScreens
 
 @Composable
@@ -109,13 +110,22 @@ fun AppNavGraph(
             }
         }
 
-        composable(route = Routes.CHALLENGE + "/{id}", arguments = listOf(navArgument("id"){
+        composable(route = Routes.CHALLENGE + "/{id}", arguments = listOf(navArgument("id") {
             type = NavType.StringType
             nullable = false
         })) { backStackEntry ->
             ProtectedScaffold(navController = navController, main = false) { paddingValues ->
                 ChallengeScreen(
                     challengeId = backStackEntry.arguments?.getString("id") ?: "",
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+        }
+
+        composable(route = Routes.SETTINGS) {
+            ProtectedScaffold(navController = navController, main = false) { paddingValues ->
+                SettingsScreen(
+                    navController = navController,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
