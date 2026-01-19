@@ -18,4 +18,10 @@ object Routes {
     const val SETTINGS = "settings"
 
     const val CHALLENGE = "challenge"
+
+    const val ADMIN_PANEL = "admin-panel"
+
+    const val TERMS_AND_CONDITIONS = "terms-and-conditions"
+
+    const val PRIVACY_POLICY = "privacy-policy"
 }

@@ -52,4 +52,8 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi 
         val req = RefreshTokensRequest(refreshToken)
         return api.refreshTokens(req)
     }
+
+    suspend fun logout(): Response<String> {
+        return api.logout()
+    }
 }

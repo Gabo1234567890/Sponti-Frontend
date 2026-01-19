@@ -23,6 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -57,8 +59,10 @@ fun InputField(
     forgotPassword: Boolean = false,
     onForgotPasswordClick: (() -> Unit)? = null,
     onIconClick: (() -> Unit)? = null,
+    focusOnIconClick: Boolean = false,
     isPassword: Boolean = false,
     isPasswordVisible: Boolean = false,
+    readOnly: Boolean = false,
     onFocusChange: (Boolean) -> Unit
 ) {
     val borderColor = when (inputState) {
@@ -78,6 +82,8 @@ fun InputField(
     val shape = RoundedCornerShape(16.dp)
 
     var isMultiline by remember { mutableStateOf(false) }
+
+    val focusRequester = remember { FocusRequester() }
 
     Column(modifier = modifier) {
         Box(
@@ -114,6 +120,7 @@ fun InputField(
                         textStyle = Paragraph1.copy(color = Base100),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .focusRequester(focusRequester)
                             .onFocusChanged { onFocusChange.invoke(it.isFocused) },
                         decorationBox = { innerTextField ->
                             if (value.isEmpty()) {
@@ -126,15 +133,24 @@ fun InputField(
                         singleLine = maxLength <= 0,
                         cursorBrush = SolidColor(Base100),
                         onTextLayout = { layout -> isMultiline = layout.lineCount > 1 },
-                        visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None
+                        visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+                        readOnly = readOnly
                     )
                 }
 
                 Spacer(Modifier.width(8.dp))
 
                 if (showIcon && icon != null) {
-                    Box(modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() },
-                        indication = null) { onIconClick?.invoke() }) { icon() }
+                    Box(
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            if (focusOnIconClick) {
+                                focusRequester.requestFocus()
+                            }
+                            onIconClick?.invoke()
+                        }) { icon() }
                 } else if (maxLength > 0) {
                     Text(
                         text = "${value.length}/$maxLength", style = Caption1.copy(color = Base80)
