@@ -99,6 +99,7 @@ data class GetChallengeByIdResponse(
 data class GetAccountDetailsResponse(
     val username: String?,
     val email: String?,
+    val allowPublicImages: Boolean?,
     val role: Role?
 )
 
