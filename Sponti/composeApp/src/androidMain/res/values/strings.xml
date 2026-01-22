@@ -1,3 +1,59 @@
 <resources>
     <string name="app_name">Sponti</string>
+
+    <string name="emptyUsername">Username is empty</string>
+    <string name="invalidEmail">Invalid email address</string>
+    <string name="shortPassword">Password must be at least 8 characters</string>
+    <string name="weakPassword">Password must contain uppercase, lowercase, number and symbol</string>
+    <string name="unknownUsernameError">Unknown username error</string>
+    <string name="unknownEmailError">Unknown email error</string>
+    <string name="unknownPasswordError">Unknown password error</string>
+    <string name="unknownError">Unknown error</string>
+    <string name="networkError">Network error</string>
+    <string name="unknownLoginError">Unknown login error</string>
+    <string name="invalidLoginResponse">Invalid login response</string>
+    <string name="notMatchingPasswords">Passwords do not match</string>
+
+    <string name="verificationTitle">Email Verification</string>
+    <string name="verificationInboxMessage">Check your inbox to find the email verification link!</string>
+    <string name="verificationSuccessTitle">Email Verified</string>
+    <string name="verificationSuccessMessage">You have successfully verified your email!</string>
+    <string name="verificationFailureTitle">Email Verification Failed</string>
+    <string name="verificationFailureMessage">An error occurred while trying to verify your email!</string>
+    <string name="forgotPassTitle">Forgot Password</string>
+    <string name="forgotPassInboxMessage">Check your inbox to find the password reset link!</string>
+    <string name="forgotPassSuccessTitle">Password Changed</string>
+    <string name="forgotPassSuccessMessage">You have successfully set a new password!</string>
+    <string name="forgotPassFailureTitle">Password Change Failed</string>
+    <string name="forgotPassFailureMessage">An error occurred while trying to change your password!</string>
+
+    <string name="emptyTitle">Title is empty</string>
+    <string name="unknownTitleError">Unknown title error</string>
+    <string name="invalidPrice">Invalid price value</string>
+    <string name="emptyPrice">Price is empty</string>
+    <string name="unknownPriceError">Unknown price error</string>
+    <string name="invalidTime">Invalid time duration value or format</string>
+    <string name="emptyTime">Time is empty</string>
+    <string name="unknownTimeError">Unknown time duration error</string>
+    <string name="emptyPlace">Place is empty</string>
+    <string name="unknownPlaceError">Unknown place error</string>
+
+    <string name="profileScreenDescription">Here you can track your progress.</string>
+    <string name="profileScreenActiveChallenges">Active challenges (max 5):</string>
+    <string name="profileScreenNoActiveChallenges">No active challenges.</string>
+    <string name="profileScreenCompletedChallenges">Challenges completed:</string>
+    <string name="profileScreenMemories">Memories:</string>
+    <string name="profileScreenNoMemories">No images of completed challenges.</string>
+
+    <string name="pickerDialogTitle">Select image source</string>
+    <string name="createChallengePickerDialogDescription">Choose how you want to add an image for the thumbnail.</string>
+    <string name="challengePickerDialogDescription">Choose how you want to add a completion image.</string>
+
+    <string name="challengeScreenTimesCompleted">Times completed:</string>
+    <string name="challengeScreenNoCompletionImages">No public completion images.</string>
+
+    <string name="finishConfirmationDialogTitle">Finish challenge</string>
+    <string name="finishConfirmationDialogDescription">Are you sure you want to finish this challenge? You will be able to upload images.</string>
+    <string name="finishUploadDialogTitle">Upload images</string>
+    <string name="finishUploadDialogDescription">You can upload up to 3 images (optional). If you finish you cannot go back.</string>
 </resources>
