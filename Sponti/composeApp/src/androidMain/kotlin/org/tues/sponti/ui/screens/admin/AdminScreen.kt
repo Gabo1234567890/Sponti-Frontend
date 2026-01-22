@@ -73,7 +73,7 @@ fun AdminScreen(navController: NavController, modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { _ ->
         Column(
             modifier = modifier
                 .fillMaxSize()

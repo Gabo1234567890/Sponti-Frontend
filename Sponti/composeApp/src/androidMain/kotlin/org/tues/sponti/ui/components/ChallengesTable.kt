@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.tues.sponti.R
 import org.tues.sponti.data.network.AdminChallengeListItem
-import org.tues.sponti.ui.screens.common.minutesToFormattedTimeString
 import org.tues.sponti.ui.theme.Base100
 import org.tues.sponti.ui.theme.Base80
 import org.tues.sponti.ui.theme.Error
