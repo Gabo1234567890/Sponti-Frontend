@@ -1,5 +1,7 @@
 package org.tues.sponti.data.chal
 
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -12,6 +14,16 @@ import retrofit2.Response
 import java.io.File
 
 class ChalRepository(private val api: ApiService = RetrofitClient.api) {
+    private val _challengesInvalidated = MutableSharedFlow<Unit>(
+        replay = 1,
+        extraBufferCapacity = 1
+    )
+    val challengesInvalidated = _challengesInvalidated.asSharedFlow()
+
+    suspend fun invalidateChallenges() {
+        _challengesInvalidated.emit(Unit)
+    }
+
     suspend fun fetchChallengesByFilters(
         minPrice: Int?,
         maxPrice: Int?,

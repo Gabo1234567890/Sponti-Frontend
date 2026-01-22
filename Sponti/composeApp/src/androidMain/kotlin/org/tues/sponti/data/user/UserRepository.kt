@@ -3,6 +3,7 @@ package org.tues.sponti.data.user
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.GetAccountDetailsResponse
 import org.tues.sponti.data.network.GetCurrentUserDataResponse
+import org.tues.sponti.data.network.MessageResponse
 import org.tues.sponti.data.network.PatchCurrentUserRequest
 import org.tues.sponti.data.network.PatchCurrentUserResponse
 import org.tues.sponti.data.network.RetrofitClient
@@ -25,7 +26,7 @@ class UserRepository(private val api: ApiService = RetrofitClient.api) {
         return api.patchCurrentUser(req)
     }
 
-    suspend fun deleteCurrentUser(): Response<String> {
+    suspend fun deleteCurrentUser(): Response<MessageResponse> {
         return api.deleteCurrentUser()
     }
 }

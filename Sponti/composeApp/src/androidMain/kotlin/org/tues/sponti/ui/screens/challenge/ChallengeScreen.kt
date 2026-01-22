@@ -149,55 +149,59 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                     Text(
                         text = state.challengeData!!.title, style = Heading4, color = Base100
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.challengeScreenTimesCompleted),
-                            style = Paragraph1,
-                            color = Base100
-                        )
-                        Text(
-                            text = state.completedCount.toString(),
-                            style = Heading5,
-                            color = Primary1
-                        )
+                    if (state.challengeData?.approved == true) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.challengeScreenTimesCompleted),
+                                style = Paragraph1,
+                                color = Base100
+                            )
+                            Text(
+                                text = state.completedCount.toString(),
+                                style = Heading5,
+                                color = Primary1
+                            )
+                        }
                     }
                 }
-                when {
-                    state.publicCompletionImages.isEmpty() -> Text(
-                        text = stringResource(R.string.challengeScreenNoCompletionImages),
-                        style = Heading4,
-                        color = Base100
-                    )
+                if (state.challengeData?.approved == true) {
+                    when {
+                        state.publicCompletionImages.isEmpty() -> Text(
+                            text = stringResource(R.string.challengeScreenNoCompletionImages),
+                            style = Heading4,
+                            color = Base100
+                        )
 
-                    else -> {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LazyRow(
-                                modifier = Modifier.wrapContentWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                        else -> {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                items(state.publicCompletionImages) {
-                                    AsyncImage(
-                                        model = it.url,
-                                        contentDescription = "Completion image",
-                                        modifier = Modifier
-                                            .shadow(
-                                                elevation = 16.dp,
-                                                shape = RoundedCornerShape(16.dp),
-                                                clip = false,
-                                                spotColor = Color.Black.copy(alpha = 0.1f)
-                                            )
-                                            .size(200.dp)
-                                            .clip(shape = RoundedCornerShape(20.dp)),
-                                        contentScale = ContentScale.Crop,
-                                        placeholder = painterResource(R.drawable.image_placeholder),
-                                        error = painterResource(R.drawable.image_placeholder)
-                                    )
+                                LazyRow(
+                                    modifier = Modifier.wrapContentWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                                ) {
+                                    items(state.publicCompletionImages) {
+                                        AsyncImage(
+                                            model = it.url,
+                                            contentDescription = "Completion image",
+                                            modifier = Modifier
+                                                .shadow(
+                                                    elevation = 16.dp,
+                                                    shape = RoundedCornerShape(16.dp),
+                                                    clip = false,
+                                                    spotColor = Color.Black.copy(alpha = 0.1f)
+                                                )
+                                                .size(200.dp)
+                                                .clip(shape = RoundedCornerShape(20.dp)),
+                                            contentScale = ContentScale.Crop,
+                                            placeholder = painterResource(R.drawable.image_placeholder),
+                                            error = painterResource(R.drawable.image_placeholder)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -294,7 +298,7 @@ fun ChallengeScreen(challengeId: String, modifier: Modifier = Modifier) {
                         PrimaryButton(
                             text = "Start challenge",
                             size = ButtonSize.Large,
-                            state = ButtonState.Active,
+                            state = if (state.challengeData?.approved == true) ButtonState.Active else ButtonState.Disabled,
                             modifier = Modifier.fillMaxWidth()
                         ) { viewModel.startChallenge(challengeId = challengeId) }
                     } else {

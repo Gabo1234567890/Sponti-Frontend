@@ -3,16 +3,14 @@ package org.tues.sponti.data.auth
 import org.tues.sponti.data.network.ApiService
 import org.tues.sponti.data.network.LoginRequest
 import org.tues.sponti.data.network.LoginResponse
+import org.tues.sponti.data.network.MessageResponse
 import org.tues.sponti.data.network.RefreshTokensRequest
 import org.tues.sponti.data.network.RefreshTokensResponse
 import org.tues.sponti.data.network.RequestPasswordResetRequest
-import org.tues.sponti.data.network.RequestPasswordResetResponse
 import org.tues.sponti.data.network.ResetPasswordRequest
-import org.tues.sponti.data.network.ResetPasswordResponse
 import org.tues.sponti.data.network.RetrofitClient
 import org.tues.sponti.data.network.SignupRequest
 import org.tues.sponti.data.network.SignupResponse
-import org.tues.sponti.data.network.VerifyEmailResponse
 import retrofit2.Response
 
 class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi {
@@ -30,7 +28,7 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi 
         return api.login(req)
     }
 
-    suspend fun requestPasswordReset(email: String): Response<RequestPasswordResetResponse> {
+    suspend fun requestPasswordReset(email: String): Response<MessageResponse> {
         val req = RequestPasswordResetRequest(email)
         return api.requestPasswordReset(req)
     }
@@ -39,12 +37,12 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi 
         token: String,
         email: String,
         password: String
-    ): Response<ResetPasswordResponse> {
+    ): Response<MessageResponse> {
         val req = ResetPasswordRequest(password)
         return api.resetPassword(token, email, req)
     }
 
-    suspend fun verifyEmail(token: String, email: String): Response<VerifyEmailResponse> {
+    suspend fun verifyEmail(token: String, email: String): Response<MessageResponse> {
         return api.verifyEmail(token, email)
     }
 
@@ -53,7 +51,7 @@ class AuthRepository(private val api: ApiService = RetrofitClient.api): AuthApi 
         return api.refreshTokens(req)
     }
 
-    suspend fun logout(): Response<String> {
+    suspend fun logout(): Response<MessageResponse> {
         return api.logout()
     }
 }

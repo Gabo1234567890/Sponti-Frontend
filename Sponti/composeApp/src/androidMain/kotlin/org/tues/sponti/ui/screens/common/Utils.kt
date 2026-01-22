@@ -43,6 +43,7 @@ fun ChallengeDto.toUi(): ChallengeType {
         duration = durationMinutes,
         place = place,
         vehicle = vehicle,
-        placeType = placeType
+        placeType = placeType,
+        approved = approved
     )
 }

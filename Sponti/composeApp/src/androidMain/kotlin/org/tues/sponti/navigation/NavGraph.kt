@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import org.tues.sponti.ui.screens.admin.AdminScreen
 import org.tues.sponti.ui.screens.challenge.ChallengeScreen
 import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
 import org.tues.sponti.ui.screens.createchallenge.CreateChallengeScreen
@@ -124,6 +125,15 @@ fun AppNavGraph(
 
         composable(route = Routes.SETTINGS) {
             SettingsRoute(navController = navController, main = false)
+        }
+
+        composable(route = Routes.ADMIN) {
+            ProtectedScaffold(navController = navController, main = false) { paddingValues ->
+                AdminScreen(
+                    navController = navController,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
