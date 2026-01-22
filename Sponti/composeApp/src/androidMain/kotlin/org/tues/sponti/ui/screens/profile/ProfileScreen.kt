@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,136 +63,144 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
     LaunchedEffect(globalErrorText) {
         globalErrorText?.let {
             snackBarHostState.showSnackbar(it)
+            viewModel.clearGlobalError()
         }
     }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
-            .background(Base0)
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        if (state.isLoading && state.userData == null) {
-            item {
-                Text(
-                    text = "Loading...", style = Heading4, color = Primary1
-                )
-            }
-        } else {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                .background(Base0)
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            if (state.isLoading && state.userData == null) {
+                item {
                     Text(
-                        text = "Hi, ${state.userData?.username}!",
-                        style = Heading5,
-                        color = Primary1
-                    )
-                    Text(
-                        text = stringResource(R.string.profileScreenDescription),
-                        style = Paragraph1,
-                        color = Base100
-                    )
-                }
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Base80
-                )
-                Spacer(Modifier.height(32.dp))
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = stringResource(R.string.profileScreenActiveChallenges),
-                        style = Heading6,
-                        color = Base100
-                    )
-                }
-                Spacer(Modifier.height(4.dp))
-            }
-            items(items = state.activeChallenge) {
-                when {
-                    state.isLoading -> Text(
                         text = "Loading...", style = Heading4, color = Primary1
                     )
-
-                    state.activeChallenge.isEmpty() -> Text(
-                        text = stringResource(R.string.profileScreenNoActiveChallenges),
-                        style = Heading4,
-                        color = Base100
-                    )
-
-                    else -> {
-                        Spacer(Modifier.height(24.dp))
-                        ChallengeCard(it) {
-                            navController.navigate("${Routes.CHALLENGE}/${it.id}")
-                        }
+                }
+            } else {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Hi, ${state.userData?.username}!",
+                            style = Heading5,
+                            color = Primary1
+                        )
+                        Text(
+                            text = stringResource(R.string.profileScreenDescription),
+                            style = Paragraph1,
+                            color = Base100
+                        )
                     }
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Base80
+                    )
+                    Spacer(Modifier.height(32.dp))
                 }
-            }
-            item {
-                Spacer(Modifier.height(32.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.profileScreenCompletedChallenges),
-                        style = Heading6,
-                        color = Base100
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = state.completedCount.toString(), style = Heading2, color = Primary1
-                    )
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = stringResource(R.string.profileScreenActiveChallenges),
+                            style = Heading6,
+                            color = Base100
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
                 }
-                Spacer(Modifier.height(32.dp))
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = stringResource(R.string.profileScreenMemories),
-                        style = Heading6,
-                        color = Base100
-                    )
-                }
-                Spacer(Modifier.height(24.dp))
-                when {
-                    state.isLoading -> Text(
-                        text = "Loading...", style = Heading4, color = Primary1
-                    )
+                items(items = state.activeChallenge) {
+                    when {
+                        state.isLoading -> Text(
+                            text = "Loading...", style = Heading4, color = Primary1
+                        )
 
-                    state.memories.isEmpty() -> Text(
-                        text = stringResource(R.string.profileScreenNoMemories),
-                        style = Heading4,
-                        color = Base100
-                    )
+                        state.activeChallenge.isEmpty() -> Text(
+                            text = stringResource(R.string.profileScreenNoActiveChallenges),
+                            style = Heading4,
+                            color = Base100
+                        )
 
-                    else -> {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LazyRow(
-                                modifier = Modifier.wrapContentWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(20.dp)
-                            ) {
-                                items(state.memories) { MemoryCard(it) }
+                        else -> {
+                            Spacer(Modifier.height(24.dp))
+                            ChallengeCard(it) {
+                                navController.navigate("${Routes.CHALLENGE}/${it.id}")
                             }
                         }
-                        Spacer(Modifier.height(20.dp))
                     }
                 }
-                Spacer(Modifier.height(4.dp))
+                item {
+                    Spacer(Modifier.height(32.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.profileScreenCompletedChallenges),
+                            style = Heading6,
+                            color = Base100
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = state.completedCount.toString(),
+                            style = Heading2,
+                            color = Primary1
+                        )
+                    }
+                    Spacer(Modifier.height(32.dp))
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = stringResource(R.string.profileScreenMemories),
+                            style = Heading6,
+                            color = Base100
+                        )
+                    }
+                    Spacer(Modifier.height(24.dp))
+                    when {
+                        state.isLoading -> Text(
+                            text = "Loading...", style = Heading4, color = Primary1
+                        )
+
+                        state.memories.isEmpty() -> Text(
+                            text = stringResource(R.string.profileScreenNoMemories),
+                            style = Heading4,
+                            color = Base100
+                        )
+
+                        else -> {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LazyRow(
+                                    modifier = Modifier.wrapContentWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                                ) {
+                                    items(state.memories) { MemoryCard(it) }
+                                }
+                            }
+                            Spacer(Modifier.height(20.dp))
+                        }
+                    }
+                    Spacer(Modifier.height(4.dp))
+                }
             }
         }
     }

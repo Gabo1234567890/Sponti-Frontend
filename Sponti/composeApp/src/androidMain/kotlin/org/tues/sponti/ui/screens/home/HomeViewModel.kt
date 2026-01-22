@@ -212,4 +212,8 @@ class HomeViewModel(private val chalRepository: ChalRepository = RepositoryProvi
             }
         }
     }
+
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
 }

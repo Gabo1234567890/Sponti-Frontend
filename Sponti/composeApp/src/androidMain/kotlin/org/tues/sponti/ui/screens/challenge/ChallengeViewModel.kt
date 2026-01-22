@@ -171,4 +171,7 @@ class ChallengeViewModel(
         }
     }
 
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
 }

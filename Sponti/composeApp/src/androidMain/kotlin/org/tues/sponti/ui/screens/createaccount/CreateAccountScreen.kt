@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -84,106 +85,109 @@ fun CreateAccountScreen(
     LaunchedEffect(globalErrorText) {
         globalErrorText?.let {
             snackBarHostState.showSnackbar(it)
+            viewModel.clearGlobalError()
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-            .background(Base0),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_name),
-                contentDescription = "Sponti Logo"
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(text = "Create Account", style = Heading3, color = Primary1)
-        }
-        Spacer(Modifier.height(64.dp))
-        Column {
-            InputField(
-                value = state.username,
-                onValueChange = { viewModel.onUsernameChange(it) },
-                label = "Username",
-                placeholder = "Username",
-                inputState = usernameState,
-                errorMessage = state.usernameError?.toUiText(FieldType.USERNAME) ?: "",
-                onFocusChange = { focused ->
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .background(Base0),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_name),
+                    contentDescription = "Sponti Logo"
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(text = "Create Account", style = Heading3, color = Primary1)
+            }
+            Spacer(Modifier.height(64.dp))
+            Column {
+                InputField(
+                    value = state.username,
+                    onValueChange = { viewModel.onUsernameChange(it) },
+                    label = "Username",
+                    placeholder = "Username",
+                    inputState = usernameState,
+                    errorMessage = state.usernameError?.toUiText(FieldType.USERNAME) ?: "",
+                    onFocusChange = { focused ->
+                        usernameState =
+                            if (focused) InputState.Active else if (state.username.isEmpty()) InputState.Default else InputState.Filled
+                    })
+                Spacer(Modifier.height(16.dp))
+                InputField(
+                    value = state.email,
+                    onValueChange = { viewModel.onEmailChange(it) },
+                    label = "Email",
+                    placeholder = "Email",
+                    inputState = emailState,
+                    errorMessage = state.emailError?.toUiText(FieldType.EMAIL) ?: "",
+                    onFocusChange = { focused ->
+                        emailState =
+                            if (focused) InputState.Active else if (state.email.isEmpty()) InputState.Default else InputState.Filled
+                    })
+                Spacer(Modifier.height(16.dp))
+                InputField(
+                    value = state.password,
+                    onValueChange = { viewModel.onPasswordChange(it) },
+                    label = "Password",
+                    placeholder = "Password",
+                    inputState = passwordState,
+                    showIcon = true,
+                    icon = {
+                        Image(
+                            painter = painterResource(if (showPassword) R.drawable.eye_crossed else R.drawable.eye),
+                            contentDescription = "Toggle password visibility"
+                        )
+                    },
+                    errorMessage = state.passwordError?.toUiText(FieldType.PASSWORD) ?: "",
+                    isPassword = true,
+                    isPasswordVisible = showPassword,
+                    onIconClick = { showPassword = !showPassword },
+                    onFocusChange = { focused ->
+                        passwordState =
+                            if (focused) InputState.Active else if (state.password.isEmpty()) InputState.Default else InputState.Filled
+                    })
+            }
+            Spacer(Modifier.height(64.dp))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                PrimaryButton(
+                    text = if (state.isSubmitting) "Creating..." else "Create Account",
+                    size = ButtonSize.Large,
+                    state = if (
+                        state.isSubmitting
+                        || state.username.isEmpty()
+                        || state.email.isEmpty()
+                        || state.password.isEmpty()
+                        || state.usernameError != null
+                        || state.emailError != null
+                        || state.passwordError != null
+                    ) ButtonState.Disabled
+                    else ButtonState.Active
+                ) {
+                    focusManager.clearFocus()
+                    viewModel.submit(onSuccess = onSuccess)
                     usernameState =
-                        if (focused) InputState.Active else if (state.username.isEmpty()) InputState.Default else InputState.Filled
-                })
-            Spacer(Modifier.height(16.dp))
-            InputField(
-                value = state.email,
-                onValueChange = { viewModel.onEmailChange(it) },
-                label = "Email",
-                placeholder = "Email",
-                inputState = emailState,
-                errorMessage = state.emailError?.toUiText(FieldType.EMAIL) ?: "",
-                onFocusChange = { focused ->
+                        if (state.usernameError == null) if (state.username.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
                     emailState =
-                        if (focused) InputState.Active else if (state.email.isEmpty()) InputState.Default else InputState.Filled
-                })
-            Spacer(Modifier.height(16.dp))
-            InputField(
-                value = state.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
-                label = "Password",
-                placeholder = "Password",
-                inputState = passwordState,
-                showIcon = true,
-                icon = {
-                    Image(
-                        painter = painterResource(if (showPassword) R.drawable.eye_crossed else R.drawable.eye),
-                        contentDescription = "Toggle password visibility"
-                    )
-                },
-                errorMessage = state.passwordError?.toUiText(FieldType.PASSWORD) ?: "",
-                isPassword = true,
-                isPasswordVisible = showPassword,
-                onIconClick = { showPassword = !showPassword },
-                onFocusChange = { focused ->
+                        if (state.emailError == null) if (state.email.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
                     passwordState =
-                        if (focused) InputState.Active else if (state.password.isEmpty()) InputState.Default else InputState.Filled
-                })
-        }
-        Spacer(Modifier.height(64.dp))
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            PrimaryButton(
-                text = if (state.isSubmitting) "Creating..." else "Create Account",
-                size = ButtonSize.Large,
-                state = if (
-                    state.isSubmitting
-                    || state.username.isEmpty()
-                    || state.email.isEmpty()
-                    || state.password.isEmpty()
-                    || state.usernameError != null
-                    || state.emailError != null
-                    || state.passwordError != null
-                ) ButtonState.Disabled
-                else ButtonState.Active
-            ) {
-                focusManager.clearFocus()
-                viewModel.submit(onSuccess = onSuccess)
-                usernameState =
-                    if (state.usernameError == null) if (state.username.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
-                emailState =
-                    if (state.emailError == null) if (state.email.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
-                passwordState =
-                    if (state.passwordError == null) if (state.password.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
-            }
-            Spacer(Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Already have an account?", style = Caption1, color = Base100)
-                Spacer(Modifier.width(12.dp))
-                LinkButton(text = "Log In") { onNavigateToLogin() }
+                        if (state.passwordError == null) if (state.password.isEmpty()) InputState.Default else InputState.Filled else InputState.Error
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Already have an account?", style = Caption1, color = Base100)
+                    Spacer(Modifier.width(12.dp))
+                    LinkButton(text = "Log In") { onNavigateToLogin() }
+                }
             }
         }
-        SnackbarHost(hostState = snackBarHostState)
     }
 }

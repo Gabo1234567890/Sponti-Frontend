@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.tues.sponti.data.auth.AuthRepository
 import org.tues.sponti.data.network.ErrorResponse
@@ -33,6 +34,10 @@ class CreateAccountViewModel(private val authRepository: AuthRepository = AuthRe
         _state.value = _state.value.copy(
             password = value, passwordError = null
         )
+    }
+
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
     }
 
     fun submit(onSuccess: () -> Unit) {

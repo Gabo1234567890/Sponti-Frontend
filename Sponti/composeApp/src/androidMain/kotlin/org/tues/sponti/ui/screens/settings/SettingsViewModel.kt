@@ -33,6 +33,10 @@ class SettingsViewModel(
         _state.update { it.copy(viewAccountDetails = value) }
     }
 
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
+
     fun loadAccountDetails() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }

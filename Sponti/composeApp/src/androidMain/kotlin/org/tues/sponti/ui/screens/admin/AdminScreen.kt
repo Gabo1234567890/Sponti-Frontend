@@ -73,11 +73,12 @@ fun AdminScreen(navController: NavController, modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { _ ->
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(Base0)
+                .padding(paddingValues)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally

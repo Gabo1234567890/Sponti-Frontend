@@ -62,4 +62,8 @@ class ProfileViewModel(
             }
         }
     }
+
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
 }

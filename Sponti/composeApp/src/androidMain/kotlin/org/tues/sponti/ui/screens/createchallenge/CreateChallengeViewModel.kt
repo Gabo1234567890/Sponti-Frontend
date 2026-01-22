@@ -58,6 +58,10 @@ class CreateChallengeViewModel(
         _state.update { it.copy(placeType = value) }
     }
 
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
+
     fun submit(onSuccess: () -> Unit) {
         val price = _state.value.price.trim().toIntOrNull()
         val durationMinutes =

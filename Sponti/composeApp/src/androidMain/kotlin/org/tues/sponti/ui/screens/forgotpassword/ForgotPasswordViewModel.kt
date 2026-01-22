@@ -75,6 +75,10 @@ class ForgotPasswordViewModel(
         )
     }
 
+    fun clearGlobalError() {
+        _state.update { it.copy(globalError = null) }
+    }
+
     fun resetPassword(token: String, email: String) {
         val s = _state.value
 

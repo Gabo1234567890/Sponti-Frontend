@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -103,6 +105,7 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
     LaunchedEffect(globalErrorText) {
         globalErrorText?.let {
             snackBarHostState.showSnackbar(it)
+            viewModel.clearGlobalError()
         }
     }
 
@@ -133,203 +136,207 @@ fun CreateChallengeScreen(navController: NavController, modifier: Modifier = Mod
         else -> ""
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
-            .verticalScroll(rememberScrollState())
-            .background(Base0)
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp)) {
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(32.dp)
-        ) {
+            modifier = modifier
+                .fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                .verticalScroll(rememberScrollState())
+                .background(Base0)
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp)) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                InputField(
-                    value = state.title,
-                    onValueChange = { viewModel.onTitleChange(it) },
-                    label = "Title",
-                    placeholder = "Title",
-                    inputState = titleState,
-                    onFocusChange = { focused ->
-                        titleState =
-                            if (focused) InputState.Active else if (state.title.isEmpty()) InputState.Default else InputState.Filled
-                    },
-                    maxLength = 25
-                )
-                InputField(
-                    value = state.description,
-                    onValueChange = { viewModel.onDescriptionChange(it) },
-                    label = "Description (optional)",
-                    placeholder = "Description (optional)",
-                    inputState = descriptionState,
-                    onFocusChange = { focused ->
-                        descriptionState =
-                            if (focused) InputState.Active else if (state.description.isEmpty()) InputState.Default else InputState.Filled
-                    },
-                    maxLength = 500
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                ImagePickerBox(
-                    imageFile = state.thumbnail, onClick = { showPicker = true })
-                Text(
-                    text = "Add an image that will serve as the thumbnail of the challenge. (optional)\n\nNote: You cannot add later.",
-                    style = Caption1,
-                    color = Base100
-                )
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        IconInputField(
-                            iconId = R.drawable.price,
-                            value = state.price,
-                            onValueChange = { viewModel.onPriceChange(it) },
-                            placeholder = "0",
-                            inputState = priceState,
-                            maxLength = 3,
-                            onFocusChange = { focused ->
-                                priceState =
-                                    if (focused) InputState.Active else if (state.price.isEmpty()) InputState.Default else InputState.Filled
-                            },
-                            modifier = Modifier.width(76.dp)
-                        )
-                        IconInputField(
-                            iconId = R.drawable.time,
-                            value = state.duration,
-                            onValueChange = { viewModel.onDurationChange(it) },
-                            placeholder = "00:00",
-                            inputState = durationState,
-                            maxLength = 5,
-                            onFocusChange = { focused ->
-                                durationState =
-                                    if (focused) InputState.Active else if (state.duration.isEmpty()) InputState.Default else InputState.Filled
-                                if (durationState == InputState.Filled)
-                                    viewModel.onDurationChange(
-                                        if (state.duration.toIntOrNull() == null) state.duration else state.duration.toInt()
-                                            .minutesToFormattedTimeString()
-                                    )
-                            },
-                            modifier = Modifier.width(76.dp)
-                        )
-                        DropdownInputField(
-                            iconId = R.drawable.vehicle,
-                            options = VehicleType.entries.map { vehicleType ->
-                                vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
-                            },
-                            selected = state.vehicle.name.lowercase()
-                                .replaceFirstChar { it.uppercase() },
-                            onSelectedChange = { selected ->
-                                viewModel.onVehicleChange(
-                                    VehicleType.valueOf(
-                                        selected.uppercase()
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                    Text(
-                        text = errorText,
-                        style = Caption2,
-                        color = Error
+                    InputField(
+                        value = state.title,
+                        onValueChange = { viewModel.onTitleChange(it) },
+                        label = "Title",
+                        placeholder = "Title",
+                        inputState = titleState,
+                        onFocusChange = { focused ->
+                            titleState =
+                                if (focused) InputState.Active else if (state.title.isEmpty()) InputState.Default else InputState.Filled
+                        },
+                        maxLength = 25
+                    )
+                    InputField(
+                        value = state.description,
+                        onValueChange = { viewModel.onDescriptionChange(it) },
+                        label = "Description (optional)",
+                        placeholder = "Description (optional)",
+                        inputState = descriptionState,
+                        onFocusChange = { focused ->
+                            descriptionState =
+                                if (focused) InputState.Active else if (state.description.isEmpty()) InputState.Default else InputState.Filled
+                        },
+                        maxLength = 500
                     )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    IconInputField(
-                        iconId = R.drawable.location,
-                        value = state.place,
-                        onValueChange = { viewModel.onPlaceChange(it) },
-                        placeholder = "Place",
-                        inputState = placeState,
-                        maxLength = 25,
-                        onFocusChange = { focused ->
-                            placeState =
-                                if (focused) InputState.Active else if (state.place.isEmpty()) InputState.Default else InputState.Filled
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
-                    )
-                    DropdownInputField(
-                        iconId = null,
-                        options = PlaceType.entries.map { placeType ->
-                            placeType.name.lowercase().replaceFirstChar { it.uppercase() }
-                        },
-                        selected = state.placeType.name.lowercase()
-                            .replaceFirstChar { it.uppercase() },
-                        onSelectedChange = { selected ->
-                            viewModel.onPlaceTypeChange(
-                                PlaceType.valueOf(
-                                    selected.uppercase()
-                                )
-                            )
-                        },
-                        modifier = Modifier.width(100.dp)
+                    ImagePickerBox(
+                        imageFile = state.thumbnail, onClick = { showPicker = true })
+                    Text(
+                        text = "Add an image that will serve as the thumbnail of the challenge. (optional)\n\nNote: You cannot add later.",
+                        style = Caption1,
+                        color = Base100
                     )
                 }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            IconInputField(
+                                iconId = R.drawable.price,
+                                value = state.price,
+                                onValueChange = { viewModel.onPriceChange(it) },
+                                placeholder = "0",
+                                inputState = priceState,
+                                maxLength = 3,
+                                onFocusChange = { focused ->
+                                    priceState =
+                                        if (focused) InputState.Active else if (state.price.isEmpty()) InputState.Default else InputState.Filled
+                                },
+                                modifier = Modifier.width(76.dp)
+                            )
+                            IconInputField(
+                                iconId = R.drawable.time,
+                                value = state.duration,
+                                onValueChange = { viewModel.onDurationChange(it) },
+                                placeholder = "00:00",
+                                inputState = durationState,
+                                maxLength = 5,
+                                onFocusChange = { focused ->
+                                    durationState =
+                                        if (focused) InputState.Active else if (state.duration.isEmpty()) InputState.Default else InputState.Filled
+                                    if (durationState == InputState.Filled)
+                                        viewModel.onDurationChange(
+                                            if (state.duration.toIntOrNull() == null) state.duration else state.duration.toInt()
+                                                .minutesToFormattedTimeString()
+                                        )
+                                },
+                                modifier = Modifier.width(76.dp)
+                            )
+                            DropdownInputField(
+                                iconId = R.drawable.vehicle,
+                                options = VehicleType.entries.map { vehicleType ->
+                                    vehicleType.name.lowercase().replaceFirstChar { it.uppercase() }
+                                },
+                                selected = state.vehicle.name.lowercase()
+                                    .replaceFirstChar { it.uppercase() },
+                                onSelectedChange = { selected ->
+                                    viewModel.onVehicleChange(
+                                        VehicleType.valueOf(
+                                            selected.uppercase()
+                                        )
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Text(
+                            text = errorText,
+                            style = Caption2,
+                            color = Error
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        IconInputField(
+                            iconId = R.drawable.location,
+                            value = state.place,
+                            onValueChange = { viewModel.onPlaceChange(it) },
+                            placeholder = "Place",
+                            inputState = placeState,
+                            maxLength = 25,
+                            onFocusChange = { focused ->
+                                placeState =
+                                    if (focused) InputState.Active else if (state.place.isEmpty()) InputState.Default else InputState.Filled
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+                        )
+                        DropdownInputField(
+                            iconId = null,
+                            options = PlaceType.entries.map { placeType ->
+                                placeType.name.lowercase().replaceFirstChar { it.uppercase() }
+                            },
+                            selected = state.placeType.name.lowercase()
+                                .replaceFirstChar { it.uppercase() },
+                            onSelectedChange = { selected ->
+                                viewModel.onPlaceTypeChange(
+                                    PlaceType.valueOf(
+                                        selected.uppercase()
+                                    )
+                                )
+                            },
+                            modifier = Modifier.width(100.dp)
+                        )
+                    }
+                }
             }
-        }
-        PrimaryButton(
-            text = "Submit",
-            size = ButtonSize.Large,
-            state =
-                if (
-                    state.title.isEmpty()
-                    || state.price.isEmpty()
-                    || state.duration.isEmpty()
-                    || state.place.isEmpty()
-                    || state.titleError != null
-                    || state.priceError != null
-                    || state.durationError != null
-                    || state.placeError != null
-                    || state.isSubmitting
-                ) ButtonState.Disabled else ButtonState.Active
-        ) {
-            viewModel.submit(onSuccess = { navController.navigate(Routes.HOME) })
-        }
+            PrimaryButton(
+                text = "Submit",
+                size = ButtonSize.Large,
+                state =
+                    if (
+                        state.title.isEmpty()
+                        || state.price.isEmpty()
+                        || state.duration.isEmpty()
+                        || state.place.isEmpty()
+                        || state.titleError != null
+                        || state.priceError != null
+                        || state.durationError != null
+                        || state.placeError != null
+                        || state.isSubmitting
+                    ) ButtonState.Disabled else ButtonState.Active
+            ) {
+                viewModel.submit(onSuccess = { navController.navigate(Routes.HOME) })
+            }
 
-        if (showPicker) {
-            PickerDialog(
-                onGallery = {
-                    showPicker = false
-                    galleryLauncher.launch("image/*")
-                },
-                onCamera = {
-                    showPicker = false
-                    val file = context.createTempImageFile()
-                    tempCameraFile = file
-                    val uri = FileProvider.getUriForFile(
-                        context,
-                        "${context.packageName}.fileprovider",
-                        file
-                    )
-                    cameraLauncher.launch(uri)
-                },
-                onDismiss = { showPicker = false },
-                descriptionId = R.string.createChallengePickerDialogDescription
-            )
+            if (showPicker) {
+                PickerDialog(
+                    onGallery = {
+                        showPicker = false
+                        galleryLauncher.launch("image/*")
+                    },
+                    onCamera = {
+                        showPicker = false
+                        val file = context.createTempImageFile()
+                        tempCameraFile = file
+                        val uri = FileProvider.getUriForFile(
+                            context,
+                            "${context.packageName}.fileprovider",
+                            file
+                        )
+                        cameraLauncher.launch(uri)
+                    },
+                    onDismiss = { showPicker = false },
+                    descriptionId = R.string.createChallengePickerDialogDescription
+                )
+            }
         }
     }
 }
