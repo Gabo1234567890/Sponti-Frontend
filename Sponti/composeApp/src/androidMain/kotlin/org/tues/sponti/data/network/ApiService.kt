@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.tues.sponti.data.chal.ChallengeDto
+import org.tues.sponti.data.chal.VehicleType
 import org.tues.sponti.data.part.CompletionImageDto
 import org.tues.sponti.data.part.ParticipationDto
 import org.tues.sponti.data.part.PublicCompletionImage
@@ -46,13 +47,7 @@ data class LoginResponse(val accessToken: String?, val refreshToken: String?)
 
 data class RequestPasswordResetRequest(val email: String)
 
-data class RequestPasswordResetResponse(val message: String?)
-
 data class ResetPasswordRequest(val password: String)
-
-data class ResetPasswordResponse(val message: String?)
-
-data class VerifyEmailResponse(val message: String?)
 
 data class RefreshTokensRequest(val refreshToken: String)
 
@@ -83,9 +78,7 @@ data class GetParticipationStatusResponse(
 
 @JsonClass(generateAdapter = true)
 data class GetPublicCompletionImagesResponse(
-    val items: List<PublicCompletionImage>?,
-    val page: Int?,
-    val perPage: Int?
+    val items: List<PublicCompletionImage>?, val page: Int?, val perPage: Int?
 )
 
 @JsonClass(generateAdapter = true)
@@ -97,25 +90,72 @@ data class GetChallengeByIdResponse(
 
 @JsonClass(generateAdapter = true)
 data class GetAccountDetailsResponse(
-    val username: String?,
-    val email: String?,
-    val allowPublicImages: Boolean?,
-    val role: Role?
+    val username: String?, val email: String?, val allowPublicImages: Boolean?, val role: Role?
 )
 
 @JsonClass(generateAdapter = true)
 data class PatchCurrentUserRequest(
-    val username: String?,
-    val allowPublicImages: Boolean?
+    val username: String?, val allowPublicImages: Boolean?
 )
 
 @JsonClass(generateAdapter = true)
 data class PatchCurrentUserResponse(
-    val id: String?,
-    val email: String?,
-    val username: String?,
-    val allowPublicImages: Boolean?
+    val id: String?, val email: String?, val username: String?, val allowPublicImages: Boolean?
 )
+
+data class AdminUserListItem(
+    val id: String?,
+    val username: String?,
+    val email: String?,
+    val allowPublicImages: Boolean?,
+    val role: Role?,
+    val emailVerified: Boolean?,
+    val createdAt: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class GetAllUsersResponse(
+    val items: List<AdminUserListItem>?,
+    val total: Int?,
+    val page: Int?,
+    val perPage: Int?,
+    val totalPages: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class UpdateUserRoleRequest(
+    val role: Role
+)
+
+@JsonClass(generateAdapter = true)
+data class UpdateUserRoleResponse(
+    val id: String?, val role: Role?
+)
+
+data class AdminChallengeListItem(
+    val id: String?,
+    val title: String?,
+    val description: String?,
+    val thumbnailUrl: String?,
+    val price: Int?,
+    val durationMinutes: Int?,
+    val place: String?,
+    val vehicle: VehicleType?,
+    val submittedByUserId: String?,
+    val createdAt: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class GetAdminChallengesResponse(
+    val items: List<AdminChallengeListItem>?,
+    val total: Int?,
+    val page: Int?,
+    val perPage: Int?,
+    val totalPages: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class MessageResponse(val message: String?)
 
 interface ApiService {
     @POST("/auth/signup")
@@ -125,25 +165,25 @@ interface ApiService {
     suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
 
     @POST("/auth/request-password-reset")
-    suspend fun requestPasswordReset(@Body req: RequestPasswordResetRequest): Response<RequestPasswordResetResponse>
+    suspend fun requestPasswordReset(@Body req: RequestPasswordResetRequest): Response<MessageResponse>
 
     @POST("/auth/reset-password")
     suspend fun resetPassword(
         @Query("token") token: String,
         @Query("email") email: String,
         @Body req: ResetPasswordRequest
-    ): Response<ResetPasswordResponse>
+    ): Response<MessageResponse>
 
     @GET("/auth/verify-email")
     suspend fun verifyEmail(
         @Query("token") token: String, @Query("email") email: String
-    ): Response<VerifyEmailResponse>
+    ): Response<MessageResponse>
 
     @POST("/auth/refresh")
     suspend fun refreshTokens(@Body req: RefreshTokensRequest): Response<RefreshTokensResponse>
 
     @POST("/auth/logout")
-    suspend fun logout(): Response<String>
+    suspend fun logout(): Response<MessageResponse>
 
     @GET("/challenges")
     suspend fun fetchChallengesByFilters(
@@ -179,8 +219,7 @@ interface ApiService {
 
     @GET("/user/me")
     suspend fun getCurrentUser(
-        @Query("memoryPage") memoryPage: Int,
-        @Query("memoryPerPage") memoryPerPage: Int
+        @Query("memoryPage") memoryPage: Int, @Query("memoryPerPage") memoryPerPage: Int
     ): Response<GetCurrentUserDataResponse>
 
     @GET("/user/account-details")
@@ -190,13 +229,12 @@ interface ApiService {
     suspend fun patchCurrentUser(@Body req: PatchCurrentUserRequest): Response<PatchCurrentUserResponse>
 
     @DELETE("/user/me")
-    suspend fun deleteCurrentUser(): Response<String>
+    suspend fun deleteCurrentUser(): Response<MessageResponse>
 
     @Multipart
     @POST("participations/{challengeId}/images")
     suspend fun uploadImages(
-        @Path("challengeId") challengeId: String,
-        @Part images: List<MultipartBody.Part>
+        @Path("challengeId") challengeId: String, @Part images: List<MultipartBody.Part>
     ): Response<List<CompletionImageDto>>
 
     @POST("participations/{challengeId}/start")
@@ -207,4 +245,30 @@ interface ApiService {
 
     @PATCH("participations/{challengeId}/complete")
     suspend fun completeChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
+
+    @GET("/admin/users")
+    suspend fun getAllUsers(
+        @Query("page") page: Int, @Query("perPage") perPage: Int
+    ): Response<GetAllUsersResponse>
+
+    @PATCH("/admin/users/{id}/role")
+    suspend fun updateUserRole(
+        @Path("id") id: String, @Body body: UpdateUserRoleRequest
+    ): Response<UpdateUserRoleResponse>
+
+    @DELETE("/admin/users/{id}")
+    suspend fun deleteUser(@Path("id") id: String): Response<MessageResponse>
+
+    @GET("/admin/challenges")
+    suspend fun getChallenges(
+        @Query("approved") approved: Boolean,
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int
+    ): Response<GetAdminChallengesResponse>
+
+    @PATCH("/admin/challenges/{id}/approve")
+    suspend fun approveChallenge(@Path("id") id: String): Response<ChallengeDto>
+
+    @DELETE("/admin/challenges/{id}")
+    suspend fun deleteChallenge(@Path("id") id: String): Response<MessageResponse>
 }

@@ -19,7 +19,7 @@ object Routes {
 
     const val CHALLENGE = "challenge"
 
-    const val ADMIN_PANEL = "admin-panel"
+    const val ADMIN = "admin"
 
     const val TERMS_AND_CONDITIONS = "terms-and-conditions"
 

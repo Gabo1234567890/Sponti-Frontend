@@ -72,7 +72,9 @@ fun SettingsScreen(navController: NavController, modifier: Modifier = Modifier, 
                     }
                     if (state.role == Role.ADMIN) {
                         HorizontalDivider(thickness = 1.dp, color = Base40)
-                        SettingElement(title = "Admin Panel") { }
+                        SettingElement(title = "Admin Panel") {
+                            navController.navigate(Routes.ADMIN)
+                        }
                     }
                     HorizontalDivider(thickness = 1.dp, color = Base40)
                     SettingElement(title = "Reset Password") {

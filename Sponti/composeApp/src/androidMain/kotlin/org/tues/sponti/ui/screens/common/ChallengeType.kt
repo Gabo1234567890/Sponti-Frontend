@@ -15,4 +15,5 @@ data class ChallengeType(
     val place: String,
     val vehicle: VehicleType,
     val placeType: PlaceType,
+    val approved: Boolean
 )

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.tues.sponti.core.RepositoryProvider
 import org.tues.sponti.data.chal.ChalRepository
 import org.tues.sponti.data.chal.PlaceType
 import org.tues.sponti.data.chal.VehicleType
@@ -18,14 +19,23 @@ import kotlin.collections.orEmpty
 
 private const val PLACE_SIGNATURE_ALL = "ALL"
 
-class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository()) : ViewModel() {
+class HomeViewModel(private val chalRepository: ChalRepository = RepositoryProvider.chalRepository) :
+    ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
     private var lastQuerySignature: String? = null
 
+    private val _refreshTrigger = MutableStateFlow(0)
+
     init {
         fetchChallenges()
+
+        viewModelScope.launch {
+            chalRepository.challengesInvalidated.collect {
+                refresh()
+            }
+        }
     }
 
     private fun effectivePlaceTypes(selected: Set<PlaceType>): List<PlaceType>? {
@@ -52,6 +62,12 @@ class HomeViewModel(private val chalRepository: ChalRepository = ChalRepository(
                 ?.joinToString(),
             placeSignature
         ).joinToString("|")
+    }
+
+    fun refresh() {
+        _refreshTrigger.value++
+        lastQuerySignature = null
+        fetchChallenges()
     }
 
     fun openFilter(type: FilterType) {
