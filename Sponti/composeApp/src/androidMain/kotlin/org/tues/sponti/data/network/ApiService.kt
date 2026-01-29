@@ -39,6 +39,7 @@ data class ErrorResponse(val message: Any?, val error: String?, val statusCode: 
 }
 
 data class SignupRequest(val username: String, val email: String, val password: String)
+
 data class SignupResponse(val id: String?, val email: String?, val statusCode: Int?)
 
 data class LoginRequest(val email: String, val password: String)
@@ -210,7 +211,7 @@ interface ApiService {
         @Part("placeType") placeType: RequestBody
     ): Response<ChallengeDto>
 
-    @GET("challenges/{id}")
+    @GET("/challenges/{id}")
     suspend fun getChallengeById(
         @Path("id") id: String,
         @Query("completionImagesPage") completionImagesPage: Int,
@@ -232,18 +233,18 @@ interface ApiService {
     suspend fun deleteCurrentUser(): Response<MessageResponse>
 
     @Multipart
-    @POST("participations/{challengeId}/images")
+    @POST("/participations/{challengeId}/images")
     suspend fun uploadImages(
         @Path("challengeId") challengeId: String, @Part images: List<MultipartBody.Part>
     ): Response<List<CompletionImageDto>>
 
-    @POST("participations/{challengeId}/start")
+    @POST("/participations/{challengeId}/start")
     suspend fun startChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
 
-    @PATCH("participations/{challengeId}/cancel")
+    @PATCH("/participations/{challengeId}/cancel")
     suspend fun cancelChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
 
-    @PATCH("participations/{challengeId}/complete")
+    @PATCH("/participations/{challengeId}/complete")
     suspend fun completeChallenge(@Path("challengeId") challengeId: String): Response<ParticipationDto>
 
     @GET("/admin/users")
