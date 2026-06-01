@@ -20,7 +20,8 @@ fun SecondaryScaffold(
         topBar = {
             SecondaryTopBar(
                 onBack = { navController.popBackStack() },
-                title = currentRoute.substringBefore("/").replaceFirstChar { it.uppercase() }
+                title = currentRoute.substringBefore("/").replace(oldChar = '-', newChar = ' ')
+                    .replaceFirstChar { it.uppercase() }
             )
         }
     ) { paddingValues ->
