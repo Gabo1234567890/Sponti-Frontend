@@ -15,6 +15,8 @@ import org.tues.sponti.ui.screens.createaccount.CreateAccountScreen
 import org.tues.sponti.ui.screens.createchallenge.CreateChallengeScreen
 import org.tues.sponti.ui.screens.forgotpassword.ForgotPasswordScreens
 import org.tues.sponti.ui.screens.home.HomeRoute
+import org.tues.sponti.ui.screens.legal.PrivacyPolicyScreen
+import org.tues.sponti.ui.screens.legal.TermsAndConditionsScreen
 import org.tues.sponti.ui.screens.login.LogInScreen
 import org.tues.sponti.ui.screens.profile.ProfileScreen
 import org.tues.sponti.ui.screens.settings.SettingsRoute
@@ -133,6 +135,18 @@ fun AppNavGraph(
                     navController = navController,
                     modifier = Modifier.padding(paddingValues)
                 )
+            }
+        }
+
+        composable(route = Routes.TERMS_AND_CONDITIONS) {
+            ProtectedScaffold(navController = navController, main = false) { paddingValues ->
+                TermsAndConditionsScreen(modifier = Modifier.padding(paddingValues))
+            }
+        }
+
+        composable(route = Routes.PRIVACY_POLICY) {
+            ProtectedScaffold(navController = navController, main = false) { paddingValues ->
+                PrivacyPolicyScreen(modifier = Modifier.padding(paddingValues))
             }
         }
     }

@@ -122,7 +122,9 @@ fun SettingsScreen(
                                     modifier = Modifier.rotate(180f)
                                 )
                             }
-                        ) { }
+                        ) {
+                            navController.navigate(Routes.TERMS_AND_CONDITIONS)
+                        }
                         SettingElement(
                             title = "Privacy Policy",
                             action = {
@@ -132,7 +134,9 @@ fun SettingsScreen(
                                     modifier = Modifier.rotate(180f)
                                 )
                             }
-                        ) { }
+                        ) {
+                            navController.navigate(Routes.PRIVACY_POLICY)
+                        }
                     }
                 }
             }
